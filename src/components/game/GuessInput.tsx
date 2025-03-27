@@ -15,6 +15,7 @@ interface GuessInputProps {
   revealRandomTile: () => void;
   revealAllTiles: () => void;
   userGuesses: UserGuess[];
+  isStreaming: boolean;
 }
 
 const GuessInput: React.FC<GuessInputProps> = ({
@@ -25,7 +26,8 @@ const GuessInput: React.FC<GuessInputProps> = ({
   isDisabled,
   revealRandomTile,
   revealAllTiles,
-  userGuesses
+  userGuesses,
+  isStreaming
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -97,19 +99,36 @@ const GuessInput: React.FC<GuessInputProps> = ({
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <h3 className="font-medium mb-2">Guesses:</h3>
+          <h3 className="font-medium mb-2">Players Guessing:</h3>
           {userGuesses.length > 0 ? (
             <div className="space-y-2 max-h-40 overflow-y-auto">
               {userGuesses.map((guess, index) => (
                 <motion.div 
                   key={index}
-                  className="flex items-center justify-between text-sm"
+                  className={`flex items-center justify-between text-sm ${guess.isCorrect ? 'bg-green-100 dark:bg-green-900/30 p-1 rounded' : ''}`}
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.05 }}
                 >
-                  <span className="font-medium">{guess.username}:</span>
-                  <span className="text-muted-foreground">{guess.guess}</span>
+                  <span className={`font-medium ${guess.isBot ? 'text-blue-500' : 'text-primary'}`}>
+                    {guess.username}:
+                  </span>
+                  <div className="flex items-center">
+                    <span className="text-muted-foreground">
+                      {isStreaming && guess.isTyping ? (
+                        <span className="inline-flex">
+                          <span className="animate-bounce">.</span>
+                          <span className="animate-bounce" style={{ animationDelay: "0.2s" }}>.</span>
+                          <span className="animate-bounce" style={{ animationDelay: "0.4s" }}>.</span>
+                        </span>
+                      ) : (
+                        guess.guess
+                      )}
+                    </span>
+                    {guess.isCorrect && (
+                      <span className="ml-2 text-green-500 text-xs font-medium">✓ Correct!</span>
+                    )}
+                  </div>
                 </motion.div>
               ))}
             </div>

@@ -23,6 +23,7 @@ const Game = () => {
     isLoading,
     userGuesses,
     currentGuess,
+    isStreaming,
     getCurrentImage,
     handleTileClick,
     revealRandomTile,
@@ -35,7 +36,7 @@ const Game = () => {
   const { width, height } = useWindowSize();
   
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-950/40 dark:to-purple-950/40">
       <Header />
       <main className="flex-grow pt-24 pb-16 px-6 page-transition">
         <div className="max-w-4xl mx-auto">
@@ -47,7 +48,7 @@ const Game = () => {
             toggleMute={toggleMute}
           />
           
-          <div className="playful-card p-8 mb-8">
+          <div className="playful-card p-8 mb-8 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-xl rounded-2xl border border-purple-100 dark:border-purple-900">
             <motion.h1 
               className="text-2xl font-bold text-center mb-6 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent"
               initial={{ opacity: 0, y: -20 }}
@@ -80,6 +81,7 @@ const Game = () => {
                   revealRandomTile={revealRandomTile}
                   revealAllTiles={revealAllTiles}
                   userGuesses={userGuesses}
+                  isStreaming={isStreaming}
                 />
               </>
             )}

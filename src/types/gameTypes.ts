@@ -5,6 +5,9 @@ export interface UserGuess {
   username: string;
   guess: string;
   timestamp: number;
+  isBot?: boolean;
+  isTyping?: boolean;
+  isCorrect?: boolean;
 }
 
 export interface GameState {
@@ -22,6 +25,7 @@ export interface GameState {
   currentImageIndex: number;
   userGuesses: UserGuess[];
   currentGuess: string;
+  isStreaming: boolean;
 }
 
 export interface UseGameStateReturn extends GameState {
@@ -32,7 +36,7 @@ export interface UseGameStateReturn extends GameState {
   revealAllTiles: () => void;
   handleGuessSubmit: () => void;
   setCurrentGuess: (guess: string) => void;
-  addUserGuess: (username: string, guess: string) => void;
+  addUserGuess: (username: string, guess: string, isBot?: boolean, isCorrect?: boolean) => void;
   endGame: () => void;
   toggleMute: () => void;
 }
