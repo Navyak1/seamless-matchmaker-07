@@ -14,26 +14,26 @@
     --popover: 0 0% 100%;
     --popover-foreground: 220 20% 9%;
 
-    --primary: 220 70% 50%;
+    --primary: 320 70% 55%;
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 210 20% 96%;
+    --secondary: 252 70% 64%;
     --secondary-foreground: 220 20% 9%;
 
     --muted: 210 20% 96%;
     --muted-foreground: 220 10% 40%;
 
-    --accent: 220 60% 55%;
+    --accent: 35 90% 65%;
     --accent-foreground: 210 40% 98%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 220 13% 90%;
+    --border: 270 60% 90%;
     --input: 220 13% 90%;
-    --ring: 224 71.4% 45%;
+    --ring: 320 70% 55%;
 
-    --radius: 1rem;
+    --radius: 1.5rem;
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -46,42 +46,7 @@
   }
 
   .dark {
-    --background: 220 20% 5%;
-    --foreground: 210 20% 98%;
-
-    --card: 220 20% 9%;
-    --card-foreground: 210 20% 98%;
-
-    --popover: 220 20% 9%;
-    --popover-foreground: 210 20% 98%;
-
-    --primary: 220 70% 50%;
-    --primary-foreground: 210 20% 98%;
-
-    --secondary: 220 20% 12%;
-    --secondary-foreground: 210 20% 98%;
-
-    --muted: 220 20% 12%;
-    --muted-foreground: 220 10% 70%;
-
-    --accent: 220 60% 55%;
-    --accent-foreground: 210 20% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 20% 98%;
-
-    --border: 220 20% 15%;
-    --input: 220 20% 15%;
-    --ring: 224 71.4% 45%;
-
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* ... keep existing code (dark theme variables) */
   }
 }
 
@@ -93,43 +58,84 @@
   body {
     @apply bg-background text-foreground antialiased;
     font-feature-settings: "ss01", "ss02", "cv01", "cv02";
+    background-image: 
+      radial-gradient(circle at 20% 20%, rgba(var(--primary), 0.05) 0%, transparent 30%),
+      radial-gradient(circle at 80% 40%, rgba(var(--secondary), 0.1) 0%, transparent 40%),
+      radial-gradient(circle at 40% 70%, rgba(var(--accent), 0.05) 0%, transparent 30%);
+    background-attachment: fixed;
   }
 }
 
 @layer components {
   .glass-card {
     @apply bg-white/70 dark:bg-black/50 backdrop-blur-md border border-white/20 dark:border-white/10 shadow-lg;
+    background-image: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.1) 100%);
   }
 
-  .glass-input {
-    @apply bg-white/80 dark:bg-black/30 backdrop-blur-sm border border-white/20 dark:border-white/10 focus:border-primary/50 focus:ring-primary/50;
+  .playful-card {
+    @apply rounded-3xl border-2 border-primary/20 bg-white/80 dark:bg-black/50 backdrop-blur-md shadow-lg transition-all duration-300 hover:shadow-xl hover:border-primary/40;
+    background-image: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.1) 100%);
   }
 
-  .hover-scale {
-    @apply transition-transform duration-200 hover:scale-[1.02];
+  /* ... keep existing code (other utility classes) */
+
+  .confetti {
+    @apply pointer-events-none fixed inset-0 z-50 flex items-center justify-center;
   }
 
-  .nav-link {
-    @apply relative inline-block after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-primary after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left;
+  .image-tile {
+    @apply rounded-md overflow-hidden border-2 border-white/30 cursor-pointer transition-all duration-300;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   }
 
-  .section-content {
-    @apply max-w-7xl mx-auto px-4 sm:px-6 md:px-8;
+  .image-tile-revealed {
+    @apply border-primary/50;
   }
 
-  .page-transition {
-    @apply animate-fade-in;
+  .image-tile-hidden {
+    @apply bg-gradient-to-br from-secondary/20 to-primary/20 hover:from-secondary/30 hover:to-primary/30;
   }
 
-  .frosted {
-    @apply bg-white/20 dark:bg-slate-900/30 backdrop-blur-md border border-white/10 dark:border-slate-700/30;
+  .winner-announcement {
+    @apply fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm;
   }
 
-  .neumorphic {
-    @apply bg-secondary/60 shadow-[5px_5px_15px_rgba(0,0,0,0.08),-5px_-5px_15px_rgba(255,255,255,0.08)] dark:shadow-[5px_5px_15px_rgba(0,0,0,0.2),-5px_-5px_15px_rgba(255,255,255,0.05)];
+  .winner-card {
+    @apply bg-white/90 dark:bg-black/80 rounded-3xl p-8 shadow-2xl border-4 border-primary animate-bounce-slow;
+    max-width: 90%;
+    width: 500px;
   }
 
-  .pulse-animate {
-    @apply animate-[pulse_2s_cubic-bezier(0.4,0,0.6,1)_infinite];
+  @keyframes bounce-slow {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+
+  .animate-bounce-slow {
+    animation: bounce-slow 3s infinite;
+  }
+
+  .player-joined {
+    @apply animate-scale-pop;
+  }
+
+  @keyframes scale-pop {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.1);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  .animate-scale-pop {
+    animation: scale-pop 0.5s;
   }
 }

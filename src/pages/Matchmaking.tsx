@@ -3,37 +3,43 @@ import React from 'react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import MatchmakingCard from '@/components/matchmaking/MatchmakingCard';
-import { Users, Lock } from 'lucide-react';
+import { Users } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const Matchmaking = () => {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-background to-secondary/5">
       <Header />
       <main className="flex-grow pt-24 pb-16 px-6 page-transition">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h1 className="text-3xl md:text-4xl font-bold mb-4">Choose Your Game Mode</h1>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Select how you want to play today. Jump into a public game with random players or create a private game with friends.
+          <motion.div 
+            className="text-center mb-12"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <h1 className="text-3xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              Let's Play Together!
+            </h1>
+            <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
+              Click the button below to find a match and start playing with others around the world.
             </p>
-          </div>
+          </motion.div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          <motion.div 
+            className="max-w-md mx-auto"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
             <MatchmakingCard
-              title="Public Game"
-              description="Instant matchmaking with random players from around the world."
+              title="Find a Game"
+              description="Join a fun match with other players and test your picture recognition skills!"
               icon={<Users className="h-6 w-6 text-primary" />}
               to="/public-game"
               primary
             />
-            
-            <MatchmakingCard
-              title="Private Game"
-              description="Create a private game and invite your friends with a shareable link."
-              icon={<Lock className="h-6 w-6 text-foreground" />}
-              to="/private-game"
-            />
-          </div>
+          </motion.div>
         </div>
       </main>
       <Footer />

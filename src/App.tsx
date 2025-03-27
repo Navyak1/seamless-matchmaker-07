@@ -7,7 +7,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Matchmaking from "./pages/Matchmaking";
 import PublicGame from "./pages/PublicGame";
-import PrivateGame from "./pages/PrivateGame";
 import GameLobby from "./pages/GameLobby";
 import Game from "./pages/Game";
 import About from "./pages/About";
@@ -25,7 +24,6 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/matchmaking" element={<Matchmaking />} />
           <Route path="/public-game" element={<PublicGame />} />
-          <Route path="/private-game" element={<PrivateGame />} />
           <Route path="/game-lobby" element={<GameLobby />} />
           <Route path="/game" element={<Game />} />
           <Route path="/about" element={<About />} />
