@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Header from '@/components/layout/Header';
 import { useGameState } from '@/hooks/useGameState';
 import useWindowSize from '@/hooks/useWindowSize';
