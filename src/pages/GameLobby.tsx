@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Header from '@/components/layout/Header';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { Users, Trophy, ArrowLeft } from 'lucide-react';
+import { Users, Trophy, ArrowLeft, Timer } from 'lucide-react';
 
 const GameLobby = () => {
   const [countdown, setCountdown] = useState(5);
@@ -22,11 +22,10 @@ const GameLobby = () => {
       return () => clearTimeout(timer);
     } else if (countdown === 0) {
       toast.success('Game started!');
-      // In a real app, we would start the game here
-      // For demo purposes, we'll just reset the countdown
-      setTimeout(() => setCountdown(5), 1000);
+      // Redirect to the game page
+      navigate('/game');
     }
-  }, [countdown]);
+  }, [countdown, navigate]);
   
   return (
     <div className="min-h-screen flex flex-col">
@@ -47,7 +46,8 @@ const GameLobby = () => {
           <div className="glass-card rounded-2xl p-8 mb-8">
             <div className="flex justify-between items-center mb-8">
               <h1 className="text-2xl font-bold">Game Lobby</h1>
-              <div className="bg-primary/10 text-primary rounded-full px-4 py-1 text-sm font-medium">
+              <div className="bg-primary/10 text-primary rounded-full px-4 py-1 text-sm font-medium flex items-center">
+                <Timer className="h-4 w-4 mr-1" />
                 Game starting in: {countdown}s
               </div>
             </div>
@@ -77,24 +77,24 @@ const GameLobby = () => {
             <div className="bg-secondary/30 rounded-lg p-6 backdrop-blur-sm border border-border/50">
               <div className="flex items-center space-x-2 mb-4">
                 <Trophy className="h-5 w-5 text-amber-500" />
-                <h2 className="text-lg font-medium">Game Rules</h2>
+                <h2 className="text-lg font-medium">Picture Reveal Game Rules</h2>
               </div>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li className="flex items-center">
                   <div className="w-1.5 h-1.5 rounded-full bg-primary mr-2"></div>
-                  Each round lasts 2 minutes
+                  Click "Reveal Picture" to see a hidden image
                 </li>
                 <li className="flex items-center">
                   <div className="w-1.5 h-1.5 rounded-full bg-primary mr-2"></div>
-                  First player to 10 points wins
+                  Choose the correct option that matches the image
                 </li>
                 <li className="flex items-center">
                   <div className="w-1.5 h-1.5 rounded-full bg-primary mr-2"></div>
-                  Use arrow keys to move and space to interact
+                  Earn 10 points for each correct answer
                 </li>
                 <li className="flex items-center">
                   <div className="w-1.5 h-1.5 rounded-full bg-primary mr-2"></div>
-                  Have fun and be respectful to all players
+                  The player with the most points wins!
                 </li>
               </ul>
             </div>
