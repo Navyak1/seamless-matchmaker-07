@@ -1,36 +1,36 @@
-import { useState, useCallback, useEffect } from 'react';
-import soundManager from '@/utils/sound';
-import { toast } from 'sonner';
+
+import { useCallback, useEffect } from 'react';
+import { UseGameStateReturn } from '@/types/gameTypes';
 import { useGameTimer } from './useGameTimer';
 import { useGameImages } from './useGameImages';
 import { useGameTiles } from './useGameTiles';
 import { useGameBots } from './useGameBots';
 import { useGameAnswers } from './useGameAnswers';
-import { UseGameStateReturn, UserGuess } from '@/types/gameTypes';
+import { useGameScore } from './useGameScore';
+import { useGameUI } from './useGameUI';
+import { useGameInput } from './useGameInput';
+import { useGameEnd } from './useGameEnd';
 
 export const useGameState = (): UseGameStateReturn => {
-  const [score, setScore] = useState(0);
-  const [isMuted, setIsMuted] = useState(false);
-  const [showWinner, setShowWinner] = useState(false);
-  const [isWinner, setIsWinner] = useState(true);
-  const [userGuesses, setUserGuesses] = useState<UserGuess[]>([]);
-  const [currentGuess, setCurrentGuess] = useState('');
+  // Game UI state
+  const {
+    isMuted,
+    showWinner,
+    isWinner,
+    toggleMute,
+    showWinnerAnnouncement
+  } = useGameUI();
 
-  const endGame = useCallback((playerWins: boolean = true) => {
-    setIsWinner(playerWins);
-    
-    // Show result announcement
-    if (playerWins) {
-      soundManager.play('win');
-      soundManager.play('fireworks');
-    } else {
-      soundManager.play('lose');
-    }
-    setShowWinner(true);
-  }, []);
+  // Game ending logic
+  const { endGame } = useGameEnd(showWinnerAnnouncement);
 
+  // Scoring system
+  const { score, updateScore } = useGameScore();
+
+  // Timer
   const { timeLeft } = useGameTimer(60, () => endGame(score >= 30));
 
+  // Image generation and management
   const {
     generatedImages,
     currentImageIndex,
@@ -43,6 +43,7 @@ export const useGameState = (): UseGameStateReturn => {
     setTotalImagesPlayed
   } = useGameImages();
 
+  // Tile revealing system
   const {
     revealedTiles,
     allTilesRevealed,
@@ -52,50 +53,38 @@ export const useGameState = (): UseGameStateReturn => {
     resetTiles
   } = useGameTiles();
 
+  // Answer validation
   const {
     hasCorrectGuess,
     showAnswer,
     correctAnswer,
-    isDisabled,
-    setIsDisabled,
     handleBotCorrectGuess,
     handlePlayerCorrectGuess,
     revealAnswer
   } = useGameAnswers(
     moveToNextImage,
     resetTiles,
-    setUserGuesses,
-    totalImagesPlayed,
+    setTotalImagesPlayed,
     endGame
   );
 
-  const addUserGuess = useCallback((username: string, guess: string, isBot: boolean = false, isCorrect: boolean = false) => {
-    const newGuess: UserGuess = {
-      username,
-      guess,
-      timestamp: Date.now(),
-      isBot,
-      isTyping: isBot ? true : false,
-      isCorrect
-    };
-    
-    setUserGuesses(prev => [...prev, newGuess]);
-    
-    if (isBot && newGuess.isTyping) {
-      const typingTime = Math.floor(Math.random() * 2000) + 1000; // 1-3 seconds
-      
-      setTimeout(() => {
-        setUserGuesses(prev => 
-          prev.map(g => 
-            g.username === username && g.timestamp === newGuess.timestamp
-              ? { ...g, isTyping: false }
-              : g
-          )
-        );
-      }, typingTime);
-    }
-  }, []);
+  // User input management
+  const {
+    userGuesses,
+    currentGuess,
+    isDisabled,
+    setUserGuesses,
+    setCurrentGuess,
+    setIsDisabled,
+    addUserGuess,
+    handleGuessSubmit
+  } = useGameInput(
+    getCurrentAnswer,
+    handlePlayerCorrectGuess,
+    updateScore
+  );
 
+  // Bot players logic
   const {
     isStreaming,
     setIsStreaming,
@@ -110,46 +99,17 @@ export const useGameState = (): UseGameStateReturn => {
     handleBotCorrectGuess
   );
 
+  // Initialize game
   useEffect(() => {
     generateInitialImages();
   }, [generateInitialImages]);
 
+  // Monitor game state and trigger bots
   useEffect(() => {
     checkAndTriggerBots(userGuesses);
   }, [revealedTiles, allTilesRevealed, hasCorrectGuess, userGuesses, checkAndTriggerBots]);
 
-  const handleGuessSubmit = useCallback(() => {
-    if (isDisabled || !currentGuess.trim()) return;
-    
-    setIsDisabled(true);
-    
-    addUserGuess('You', currentGuess);
-    
-    const answer = getCurrentAnswer();
-    const correct = currentGuess.toLowerCase().trim() === answer.toLowerCase().trim();
-    
-    if (correct) {
-      setUserGuesses(prev => 
-        prev.map(g => 
-          g.username === 'You' && g.guess === currentGuess
-            ? { ...g, isCorrect: true }
-            : g
-        )
-      );
-      
-      const updateScore = () => setScore(prevScore => prevScore + 10);
-      handlePlayerCorrectGuess(answer, updateScore);
-      soundManager.play('correct');
-      toast.success("Correct guess! +10 points");
-    } else {
-      soundManager.play('wrong');
-      toast.error("Wrong guess! Try again");
-      setIsDisabled(false);
-    }
-    
-    setCurrentGuess('');
-  }, [isDisabled, currentGuess, addUserGuess, getCurrentAnswer, handlePlayerCorrectGuess]);
-
+  // Wrapper functions for tile revealing
   const revealRandomTile = useCallback(() => {
     originalRevealRandomTile();
     setIsStreaming(true);
@@ -163,12 +123,6 @@ export const useGameState = (): UseGameStateReturn => {
       revealAnswer(answer);
     }
   }, [originalRevealAllTiles, hasCorrectGuess, getCurrentAnswer, revealAnswer]);
-
-  const toggleMute = useCallback(() => {
-    const newMuted = !isMuted;
-    setIsMuted(newMuted);
-    soundManager.setMuted(newMuted);
-  }, [isMuted]);
 
   return {
     score,

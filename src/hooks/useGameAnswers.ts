@@ -7,8 +7,7 @@ import { toast } from 'sonner';
 export const useGameAnswers = (
   moveToNextImage: () => void,
   resetTiles: () => void,
-  setUserGuesses: React.Dispatch<React.SetStateAction<UserGuess[]>>,
-  totalImagesPlayed: number,
+  setTotalImagesPlayed: React.Dispatch<React.SetStateAction<number>>,
   endGame: (playerWins: boolean) => void,
 ) => {
   const [hasCorrectGuess, setHasCorrectGuess] = useState(false);
@@ -25,17 +24,20 @@ export const useGameAnswers = (
     setTimeout(() => {
       moveToNextImage();
       resetTiles();
-      setUserGuesses([]);
       setHasCorrectGuess(false);
       setShowAnswer(false);
       setIsDisabled(false);
       
       // End game after all images
-      if (totalImagesPlayed >= 4) { // 5 images total (0-indexed)
-        endGame(isPlayer);
-      }
+      setTotalImagesPlayed(prev => {
+        // Check if this was the last image
+        if (prev >= 4) { // 5 images total (0-indexed)
+          endGame(isPlayer);
+        }
+        return prev + 1;
+      });
     }, 3000);
-  }, [moveToNextImage, resetTiles, setUserGuesses, totalImagesPlayed, endGame]);
+  }, [moveToNextImage, resetTiles, setTotalImagesPlayed, endGame]);
 
   const handleBotCorrectGuess = useCallback((answer: string) => {
     handleCorrectGuess(answer, false);
@@ -54,17 +56,20 @@ export const useGameAnswers = (
       setTimeout(() => {
         moveToNextImage();
         resetTiles();
-        setUserGuesses([]);
         setHasCorrectGuess(false);
         setShowAnswer(false);
         
         // End game after all images
-        if (totalImagesPlayed >= 4) { // 5 images total (0-indexed)
-          endGame(false);
-        }
+        setTotalImagesPlayed(prev => {
+          // Check if this was the last image
+          if (prev >= 4) { // 5 images total (0-indexed)
+            endGame(false);
+          }
+          return prev + 1;
+        });
       }, 5000); // Increased delay to give users time to see the answer
     }
-  }, [hasCorrectGuess, moveToNextImage, resetTiles, setUserGuesses, totalImagesPlayed, endGame]);
+  }, [hasCorrectGuess, moveToNextImage, resetTiles, setTotalImagesPlayed, endGame]);
 
   return {
     hasCorrectGuess,
