@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '@/components/layout/Header';
 import { useGameState } from '@/hooks/useGameState';
 import useWindowSize from '@/hooks/useWindowSize';
@@ -7,14 +7,9 @@ import GameHeader from '@/components/game/GameHeader';
 import ImageTiles from '@/components/game/ImageTiles';
 import AnswerOptions from '@/components/game/AnswerOptions';
 import WinnerAnnouncement from '@/components/game/WinnerAnnouncement';
-import ImageGenerator from '@/components/game/ImageGenerator';
 import { motion } from 'framer-motion';
-import { Button } from '@/components/ui/button';
-import { Wand2 } from 'lucide-react';
 
 const Game = () => {
-  const [showGenerator, setShowGenerator] = useState(false);
-  
   const { 
     score, 
     timeLeft, 
@@ -24,8 +19,7 @@ const Game = () => {
     showWinner, 
     totalImagesPlayed, 
     isDisabled,
-    isGeneratingImage,
-    setIsGeneratingImage,
+    isLoading,
     getCurrentImage,
     getCurrentOptions,
     handleTileClick,
@@ -33,7 +27,6 @@ const Game = () => {
     revealAllTiles,
     handleGuess,
     toggleMute,
-    handleImageGenerated
   } = useGameState();
   
   const { width, height } = useWindowSize();
@@ -52,57 +45,39 @@ const Game = () => {
           />
           
           <div className="playful-card p-8 mb-8">
-            <div className="flex justify-between items-center mb-6">
-              <motion.h1 
-                className="text-2xl font-bold text-center bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent"
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                Guess What's in the Picture!
-              </motion.h1>
-              
-              <Button
-                variant="outline"
-                className="flex items-center gap-2 border-primary/30 text-primary"
-                onClick={() => setShowGenerator(!showGenerator)}
-              >
-                <Wand2 className="w-4 h-4" />
-                {showGenerator ? "Hide Generator" : "Generate AI Image"}
-              </Button>
-            </div>
+            <motion.h1 
+              className="text-2xl font-bold text-center mb-6 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              Guess What's in the AI-Generated Picture!
+            </motion.h1>
             
-            {showGenerator && (
-              <motion.div 
-                className="mb-6"
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <ImageGenerator 
-                  onImageGenerated={handleImageGenerated}
-                  isGenerating={isGeneratingImage}
-                  setIsGenerating={setIsGeneratingImage}
+            {isLoading ? (
+              <div className="flex justify-center items-center h-64">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+                <p className="ml-4 text-lg">Generating new AI image...</p>
+              </div>
+            ) : (
+              <>
+                <ImageTiles
+                  revealedTiles={revealedTiles}
+                  currentImage={getCurrentImage()}
+                  handleTileClick={handleTileClick}
+                  allTilesRevealed={allTilesRevealed}
                 />
-              </motion.div>
+                
+                <AnswerOptions
+                  allTilesRevealed={allTilesRevealed}
+                  currentOptions={getCurrentOptions()}
+                  handleGuess={handleGuess}
+                  isDisabled={isDisabled}
+                  revealRandomTile={revealRandomTile}
+                  revealAllTiles={revealAllTiles}
+                />
+              </>
             )}
-            
-            <ImageTiles
-              revealedTiles={revealedTiles}
-              currentImage={getCurrentImage()}
-              handleTileClick={handleTileClick}
-              allTilesRevealed={allTilesRevealed}
-            />
-            
-            <AnswerOptions
-              allTilesRevealed={allTilesRevealed}
-              currentOptions={getCurrentOptions()}
-              handleGuess={handleGuess}
-              isDisabled={isDisabled}
-              revealRandomTile={revealRandomTile}
-              revealAllTiles={revealAllTiles}
-            />
           </div>
         </div>
       </main>

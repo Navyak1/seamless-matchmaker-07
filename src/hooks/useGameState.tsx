@@ -1,25 +1,30 @@
 
 import { useState, useCallback, useEffect } from 'react';
-import { imageCategories, placeholderImages } from '@/data/imageCategories';
 import soundManager from '@/utils/sound';
 import { toast } from 'sonner';
-import { GeneratedImage } from '@/utils/imageGenerationService';
+import { GeneratedImage, imageGenerationService } from '@/utils/imageGenerationService';
+
+// Number of images to generate for each game
+const TOTAL_IMAGES_PER_GAME = 5;
 
 export const useGameState = () => {
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(60);
-  const [currentCategory, setCurrentCategory] = useState(0);
-  const [currentItem, setCurrentItem] = useState(0);
   const [revealedTiles, setRevealedTiles] = useState(Array(9).fill(false));
   const [allTilesRevealed, setAllTilesRevealed] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [showWinner, setShowWinner] = useState(false);
   const [totalImagesPlayed, setTotalImagesPlayed] = useState(0);
   const [isDisabled, setIsDisabled] = useState(false);
-  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
-  const [customImages, setCustomImages] = useState<GeneratedImage[]>([]);
-  const [useCustomImage, setUseCustomImage] = useState(false);
-
+  const [isLoading, setIsLoading] = useState(true);
+  const [generatedImages, setGeneratedImages] = useState<GeneratedImage[]>([]);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  
+  // Generate initial set of images when the component mounts
+  useEffect(() => {
+    generateInitialImages();
+  }, []);
+  
   // Start the timer when component mounts
   useEffect(() => {
     const timer = setInterval(() => {
@@ -36,55 +41,75 @@ export const useGameState = () => {
     
     return () => clearInterval(timer);
   }, []);
+  
+  // Function to generate the initial set of images
+  const generateInitialImages = async () => {
+    try {
+      setIsLoading(true);
+      const images = await imageGenerationService.generateRandomImages(TOTAL_IMAGES_PER_GAME);
+      setGeneratedImages(images);
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Failed to generate initial images:", error);
+      toast.error("Failed to generate images. Please refresh the page.");
+      setIsLoading(false);
+    }
+  };
 
   const getCurrentImage = useCallback(() => {
-    if (useCustomImage && customImages.length > 0) {
-      return customImages[0].imageUrl;
+    if (generatedImages.length === 0) {
+      return '';
     }
-    
-    try {
-      return imageCategories[currentCategory].items[currentItem].src;
-    } catch (e) {
-      // Fallback to placeholder images if real ones aren't available
-      return placeholderImages[currentItem % placeholderImages.length];
-    }
-  }, [currentCategory, currentItem, useCustomImage, customImages]);
+    return generatedImages[currentImageIndex]?.imageUrl || '';
+  }, [generatedImages, currentImageIndex]);
 
   const getCurrentOptions = useCallback(() => {
-    if (useCustomImage && customImages.length > 0) {
-      // Generate some fake options based on the custom image
-      const correctAnswer = customImages[0].prompt;
-      const category = customImages[0].category;
-      
-      // Create 3 different fake options
-      const fakeOptions = [
-        `Different ${category} scene`,
-        `Another ${category} view`,
-        `Alternative ${category}`
-      ];
-      
-      // Return the correct answer and the fake options
-      return [correctAnswer, ...fakeOptions];
+    if (generatedImages.length === 0) {
+      return ['', '', '', ''];
     }
     
-    try {
-      return imageCategories[currentCategory].items[currentItem].options;
-    } catch (e) {
-      return ['Mountain', 'Ocean', 'Forest', 'Desert'];
+    const correctPrompt = generatedImages[currentImageIndex]?.prompt || '';
+    const correctCategory = generatedImages[currentImageIndex]?.category || '';
+    
+    // Generate fake options based on other images or random options
+    const fakeOptions = [];
+    
+    // Use prompts from other images if available
+    for (let i = 0; i < generatedImages.length; i++) {
+      if (i !== currentImageIndex && fakeOptions.length < 3) {
+        fakeOptions.push(generatedImages[i].prompt);
+      }
     }
-  }, [currentCategory, currentItem, useCustomImage, customImages]);
+    
+    // Fill remaining options with variations
+    while (fakeOptions.length < 3) {
+      const randomOption = `${correctCategory} scene ${fakeOptions.length + 1}`;
+      if (!fakeOptions.includes(randomOption)) {
+        fakeOptions.push(randomOption);
+      }
+    }
+    
+    // Shuffle the options and include the correct answer
+    const allOptions = [correctPrompt, ...fakeOptions];
+    return shuffleArray(allOptions);
+  }, [generatedImages, currentImageIndex]);
 
   const getCurrentAnswer = useCallback(() => {
-    if (useCustomImage && customImages.length > 0) {
-      return customImages[0].prompt;
+    if (generatedImages.length === 0) {
+      return '';
     }
-    
-    try {
-      return imageCategories[currentCategory].items[currentItem].answer;
-    } catch (e) {
-      return getCurrentOptions()[0];
+    return generatedImages[currentImageIndex]?.prompt || '';
+  }, [generatedImages, currentImageIndex]);
+
+  // Fisher-Yates shuffle algorithm
+  const shuffleArray = (array: string[]) => {
+    const newArray = [...array];
+    for (let i = newArray.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
     }
-  }, [currentCategory, currentItem, getCurrentOptions, useCustomImage, customImages]);
+    return newArray;
+  };
 
   const handleTileClick = (index: number) => {
     if (revealedTiles[index] || allTilesRevealed) return;
@@ -145,35 +170,14 @@ export const useGameState = () => {
   const moveToNextImage = () => {
     setTotalImagesPlayed(totalImagesPlayed + 1);
     
-    // End game after 5 images
-    if (totalImagesPlayed >= 4) {
+    // End game after all images
+    if (totalImagesPlayed >= TOTAL_IMAGES_PER_GAME - 1) {
       endGame();
       return;
     }
     
-    // If using custom images, remove the first one
-    if (useCustomImage && customImages.length > 0) {
-      setCustomImages(customImages.slice(1));
-      
-      // If we've used all custom images, switch back to predefined ones
-      if (customImages.length <= 1) {
-        setUseCustomImage(false);
-      }
-    } else {
-      // Determine next category and item
-      let nextCategory = currentCategory;
-      let nextItem = currentItem + 1;
-      
-      // If we've gone through all items in this category, move to next category
-      if (nextItem >= imageCategories[nextCategory].items.length) {
-        nextItem = 0;
-        nextCategory = (nextCategory + 1) % imageCategories.length;
-      }
-      
-      setCurrentCategory(nextCategory);
-      setCurrentItem(nextItem);
-    }
-    
+    // Move to next image
+    setCurrentImageIndex(currentImageIndex + 1);
     setRevealedTiles(Array(9).fill(false));
     setAllTilesRevealed(false);
   };
@@ -190,33 +194,16 @@ export const useGameState = () => {
     soundManager.setMuted(newMuted);
   };
 
-  const handleImageGenerated = (generatedImage: GeneratedImage) => {
-    setCustomImages([...customImages, generatedImage]);
-    
-    // If this is the first custom image, switch to using custom images
-    if (!useCustomImage) {
-      setUseCustomImage(true);
-      // Reset the game state to start with the new image
-      setRevealedTiles(Array(9).fill(false));
-      setAllTilesRevealed(false);
-    }
-    
-    toast.success(`Added "${generatedImage.prompt}" to your game images!`);
-  };
-
   return {
     score,
     timeLeft,
-    currentCategory,
-    currentItem,
     revealedTiles,
     allTilesRevealed,
     isMuted,
     showWinner,
     totalImagesPlayed,
     isDisabled,
-    isGeneratingImage,
-    setIsGeneratingImage,
+    isLoading,
     getCurrentImage,
     getCurrentOptions,
     getCurrentAnswer,
@@ -225,7 +212,6 @@ export const useGameState = () => {
     revealAllTiles,
     handleGuess,
     endGame,
-    toggleMute,
-    handleImageGenerated
+    toggleMute
   };
 };
