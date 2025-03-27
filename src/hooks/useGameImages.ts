@@ -39,9 +39,8 @@ export const useGameImages = () => {
     }
     
     const correctPrompt = generatedImages[currentImageIndex]?.prompt || '';
-    const correctCategory = generatedImages[currentImageIndex]?.category || '';
     
-    // Generate fake options based on other images or random options
+    // Generate fake options based on other images
     const fakeOptions = [];
     
     // Use prompts from other images if available
@@ -51,11 +50,11 @@ export const useGameImages = () => {
       }
     }
     
-    // Fill remaining options with variations
+    // Fill remaining options if needed
     while (fakeOptions.length < 3) {
-      const randomOption = `${correctCategory} scene ${fakeOptions.length + 1}`;
-      if (!fakeOptions.includes(randomOption)) {
-        fakeOptions.push(randomOption);
+      const randomIndex = Math.floor(Math.random() * generatedImages.length);
+      if (randomIndex !== currentImageIndex && !fakeOptions.includes(generatedImages[randomIndex].prompt)) {
+        fakeOptions.push(generatedImages[randomIndex].prompt);
       }
     }
     
@@ -68,11 +67,11 @@ export const useGameImages = () => {
     if (generatedImages.length === 0) {
       return '';
     }
+    // This is the key change - we're getting the exact prompt used to generate the image
     return generatedImages[currentImageIndex]?.prompt || '';
   }, [generatedImages, currentImageIndex]);
 
   const moveToNextImage = useCallback(() => {
-    setTotalImagesPlayed(prev => prev + 1);
     setCurrentImageIndex(prev => prev + 1);
   }, []);
 

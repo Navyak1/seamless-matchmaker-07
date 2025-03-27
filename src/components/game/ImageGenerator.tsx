@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -6,6 +7,7 @@ import { Wand2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { imageGenerationService } from '@/utils/imageGenerationService';
 import { GeneratedImage } from '@/types/imageGenerationTypes';
+import { toast } from 'sonner';
 
 interface ImageGeneratorProps {
   onImageGenerated: (image: GeneratedImage) => void;
@@ -23,6 +25,7 @@ const ImageGenerator: React.FC<ImageGeneratorProps> = ({
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
+      toast.error("Please enter a prompt to generate an image");
       return;
     }
     
@@ -37,8 +40,10 @@ const ImageGenerator: React.FC<ImageGeneratorProps> = ({
       // Clear the form after successful generation
       setPrompt('');
       setCategory('');
+      toast.success("Image generated successfully!");
     } catch (error) {
       console.error("Failed to generate image:", error);
+      toast.error("Failed to generate image. Please try again.");
     } finally {
       setIsGenerating(false);
     }
