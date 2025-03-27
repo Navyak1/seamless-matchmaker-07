@@ -13,6 +13,7 @@ class SoundManager {
     this.loadSound('playerJoin', '/sounds/player-join.mp3');
     this.loadSound('countdown', '/sounds/countdown.mp3');
     this.loadSound('gameStart', '/sounds/game-start.mp3');
+    this.loadSound('fireworks', '/sounds/fireworks.mp3');
   }
 
   private loadSound(name: string, path: string): void {

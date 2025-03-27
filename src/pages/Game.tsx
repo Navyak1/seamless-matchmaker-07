@@ -1,10 +1,11 @@
+
 import React from 'react';
 import Header from '@/components/layout/Header';
 import { useGameState } from '@/hooks/useGameState';
 import useWindowSize from '@/hooks/useWindowSize';
 import GameHeader from '@/components/game/GameHeader';
 import ImageTiles from '@/components/game/ImageTiles';
-import AnswerOptions from '@/components/game/AnswerOptions';
+import GuessInput from '@/components/game/GuessInput';
 import WinnerAnnouncement from '@/components/game/WinnerAnnouncement';
 import { motion } from 'framer-motion';
 
@@ -19,12 +20,14 @@ const Game = () => {
     totalImagesPlayed, 
     isDisabled,
     isLoading,
+    userGuesses,
+    currentGuess,
     getCurrentImage,
-    getCurrentOptions,
     handleTileClick,
     revealRandomTile,
     revealAllTiles,
-    handleGuess,
+    handleGuessSubmit,
+    setCurrentGuess,
     toggleMute,
   } = useGameState();
   
@@ -67,13 +70,15 @@ const Game = () => {
                   allTilesRevealed={allTilesRevealed}
                 />
                 
-                <AnswerOptions
+                <GuessInput 
                   allTilesRevealed={allTilesRevealed}
-                  currentOptions={getCurrentOptions()}
-                  handleGuess={handleGuess}
+                  currentGuess={currentGuess}
+                  setCurrentGuess={setCurrentGuess}
+                  handleGuessSubmit={handleGuessSubmit}
                   isDisabled={isDisabled}
                   revealRandomTile={revealRandomTile}
                   revealAllTiles={revealAllTiles}
+                  userGuesses={userGuesses}
                 />
               </>
             )}

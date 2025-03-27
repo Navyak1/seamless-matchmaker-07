@@ -1,4 +1,11 @@
+
 import { GeneratedImage } from "@/types/imageGenerationTypes";
+
+export interface UserGuess {
+  username: string;
+  guess: string;
+  timestamp: number;
+}
 
 export interface GameState {
   score: number;
@@ -12,16 +19,19 @@ export interface GameState {
   isLoading: boolean;
   generatedImages: GeneratedImage[];
   currentImageIndex: number;
+  userGuesses: UserGuess[];
+  currentGuess: string;
 }
 
 export interface UseGameStateReturn extends GameState {
   getCurrentImage: () => string;
-  getCurrentOptions: () => string[];
   getCurrentAnswer: () => string;
   handleTileClick: (index: number) => void;
   revealRandomTile: () => void;
   revealAllTiles: () => void;
-  handleGuess: (option: string) => void;
+  handleGuessSubmit: () => void;
+  setCurrentGuess: (guess: string) => void;
+  addUserGuess: (username: string, guess: string) => void;
   endGame: () => void;
   toggleMute: () => void;
 }

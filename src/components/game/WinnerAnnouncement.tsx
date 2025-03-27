@@ -1,9 +1,10 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Confetti from 'react-confetti';
+import soundManager from '@/utils/sound';
 
 interface WinnerAnnouncementProps {
   score: number;
@@ -19,6 +20,22 @@ const WinnerAnnouncement: React.FC<WinnerAnnouncementProps> = ({
   show 
 }) => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Play celebratory sounds when winner is shown
+    if (show) {
+      soundManager.play('fireworks');
+      
+      // Play celebratory sounds with slight delays for a more festive effect
+      const timer1 = setTimeout(() => soundManager.play('win'), 500);
+      const timer2 = setTimeout(() => soundManager.play('fireworks'), 1500);
+      
+      return () => {
+        clearTimeout(timer1);
+        clearTimeout(timer2);
+      };
+    }
+  }, [show]);
 
   if (!show) return null;
 

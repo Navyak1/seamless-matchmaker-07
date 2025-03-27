@@ -5,17 +5,20 @@ import { toast } from 'sonner';
 import { useGameTimer } from './useGameTimer';
 import { useGameImages } from './useGameImages';
 import { useGameTiles } from './useGameTiles';
-import { UseGameStateReturn } from '@/types/gameTypes';
+import { UseGameStateReturn, UserGuess } from '@/types/gameTypes';
 
 export const useGameState = (): UseGameStateReturn => {
   const [score, setScore] = useState(0);
   const [isMuted, setIsMuted] = useState(false);
   const [showWinner, setShowWinner] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
+  const [userGuesses, setUserGuesses] = useState<UserGuess[]>([]);
+  const [currentGuess, setCurrentGuess] = useState('');
 
   const endGame = useCallback(() => {
     // Show winner announcement
     soundManager.play('win');
+    soundManager.play('fireworks'); // Play joyful sound with fireworks
     setShowWinner(true);
   }, []);
 
@@ -28,7 +31,6 @@ export const useGameState = (): UseGameStateReturn => {
     totalImagesPlayed,
     generateInitialImages,
     getCurrentImage,
-    getCurrentOptions,
     getCurrentAnswer,
     moveToNextImage,
     setTotalImagesPlayed
@@ -48,11 +50,25 @@ export const useGameState = (): UseGameStateReturn => {
     generateInitialImages();
   }, [generateInitialImages]);
 
-  const handleGuess = useCallback((option: string) => {
-    if (isDisabled) return;
+  const addUserGuess = useCallback((username: string, guess: string) => {
+    const newGuess: UserGuess = {
+      username,
+      guess,
+      timestamp: Date.now()
+    };
+    setUserGuesses(prev => [...prev, newGuess]);
+  }, []);
+
+  const handleGuessSubmit = useCallback(() => {
+    if (isDisabled || !currentGuess.trim()) return;
     
     setIsDisabled(true);
-    const correct = option === getCurrentAnswer();
+    
+    // Add the user's guess to the list
+    addUserGuess('You', currentGuess);
+    
+    // Check if the guess is correct (case insensitive comparison)
+    const correct = currentGuess.toLowerCase().trim() === getCurrentAnswer().toLowerCase().trim();
     
     if (correct) {
       setScore(prevScore => prevScore + 10);
@@ -64,6 +80,8 @@ export const useGameState = (): UseGameStateReturn => {
         moveToNextImage();
         resetTiles();
         setIsDisabled(false);
+        setCurrentGuess('');
+        setUserGuesses([]);
         
         // End game after all images
         if (totalImagesPlayed >= 4) { // 5 images total (0-indexed)
@@ -75,7 +93,10 @@ export const useGameState = (): UseGameStateReturn => {
       toast.error("Wrong guess! Try again");
       setIsDisabled(false);
     }
-  }, [isDisabled, getCurrentAnswer, moveToNextImage, resetTiles, totalImagesPlayed, endGame]);
+    
+    // Clear the input field after submission
+    setCurrentGuess('');
+  }, [isDisabled, currentGuess, addUserGuess, getCurrentAnswer, moveToNextImage, resetTiles, totalImagesPlayed, endGame]);
 
   const toggleMute = useCallback(() => {
     const newMuted = !isMuted;
@@ -95,13 +116,16 @@ export const useGameState = (): UseGameStateReturn => {
     isLoading,
     generatedImages,
     currentImageIndex,
+    userGuesses,
+    currentGuess,
     getCurrentImage,
-    getCurrentOptions,
     getCurrentAnswer,
     handleTileClick,
     revealRandomTile,
     revealAllTiles,
-    handleGuess,
+    handleGuessSubmit,
+    setCurrentGuess,
+    addUserGuess,
     endGame,
     toggleMute
   };
