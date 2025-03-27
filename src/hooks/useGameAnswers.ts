@@ -19,6 +19,7 @@ export const useGameAnswers = (
     setHasCorrectGuess(true);
     setCorrectAnswer(answer);
     setShowAnswer(true);
+    setIsDisabled(true);
     
     // Add delay before moving to next image
     setTimeout(() => {
@@ -52,12 +53,14 @@ export const useGameAnswers = (
     if (!hasCorrectGuess) {
       setCorrectAnswer(answer);
       setShowAnswer(true);
+      setIsDisabled(true);
       
       setTimeout(() => {
         moveToNextImage();
         resetTiles();
         setHasCorrectGuess(false);
         setShowAnswer(false);
+        setIsDisabled(false);
         
         // End game after all images
         setTotalImagesPlayed(prev => {
