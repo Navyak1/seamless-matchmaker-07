@@ -1,4 +1,3 @@
-
 import { useState, useCallback, useEffect } from 'react';
 import soundManager from '@/utils/sound';
 import { toast } from 'sonner';
@@ -11,16 +10,26 @@ export const useGameState = (): UseGameStateReturn => {
   const [score, setScore] = useState(0);
   const [isMuted, setIsMuted] = useState(false);
   const [showWinner, setShowWinner] = useState(false);
+  const [isWinner, setIsWinner] = useState(true);
   const [isDisabled, setIsDisabled] = useState(false);
   const [userGuesses, setUserGuesses] = useState<UserGuess[]>([]);
   const [currentGuess, setCurrentGuess] = useState('');
 
   const endGame = useCallback(() => {
-    // Show winner announcement
-    soundManager.play('win');
-    soundManager.play('fireworks'); // Play joyful sound with fireworks
+    // Determine if player wins or loses based on score
+    // If they have at least 30 points (3 correct answers), they win
+    const playerWins = score >= 30;
+    setIsWinner(playerWins);
+    
+    // Show result announcement
+    if (playerWins) {
+      soundManager.play('win');
+      soundManager.play('fireworks');
+    } else {
+      soundManager.play('lose');
+    }
     setShowWinner(true);
-  }, []);
+  }, [score]);
 
   const { timeLeft } = useGameTimer(60, endGame);
 
@@ -111,6 +120,7 @@ export const useGameState = (): UseGameStateReturn => {
     allTilesRevealed,
     isMuted,
     showWinner,
+    isWinner,
     totalImagesPlayed,
     isDisabled,
     isLoading,

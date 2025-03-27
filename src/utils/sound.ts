@@ -10,6 +10,7 @@ class SoundManager {
     this.loadSound('correct', '/sounds/correct.mp3');
     this.loadSound('wrong', '/sounds/wrong.mp3');
     this.loadSound('win', '/sounds/win.mp3');
+    this.loadSound('lose', '/sounds/lose.mp3'); // New sound for losing
     this.loadSound('playerJoin', '/sounds/player-join.mp3');
     this.loadSound('countdown', '/sounds/countdown.mp3');
     this.loadSound('gameStart', '/sounds/game-start.mp3');

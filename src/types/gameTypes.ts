@@ -14,6 +14,7 @@ export interface GameState {
   allTilesRevealed: boolean;
   isMuted: boolean;
   showWinner: boolean;
+  isWinner: boolean;
   totalImagesPlayed: number;
   isDisabled: boolean;
   isLoading: boolean;

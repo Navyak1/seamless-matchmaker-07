@@ -16,7 +16,8 @@ const Game = () => {
     revealedTiles, 
     allTilesRevealed, 
     isMuted, 
-    showWinner, 
+    showWinner,
+    isWinner, 
     totalImagesPlayed, 
     isDisabled,
     isLoading,
@@ -91,6 +92,7 @@ const Game = () => {
         width={width}
         height={height}
         show={showWinner}
+        isWinner={isWinner}
       />
     </div>
   );
