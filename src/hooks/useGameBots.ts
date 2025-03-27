@@ -6,13 +6,6 @@ import soundManager from '@/utils/sound';
 // Names for the bot players
 const BOT_PLAYERS = ['Player 1', 'Player 2', 'Player 4'];
 
-// Random incorrect guesses for bots
-const RANDOM_INCORRECT_GUESSES = [
-  "A dog", "A mountain", "A tree", "A house", "A car", "A flower", "A bird", 
-  "A city", "A cat", "A beach", "A person", "A robot", "A cloud", "A river", 
-  "A planet", "An animal", "A building", "A rainbow", "Fish", "Stars",
-];
-
 export const useGameBots = (
   revealedTiles: boolean[],
   allTilesRevealed: boolean,
@@ -33,6 +26,46 @@ export const useGameBots = (
     };
   }, [botGuessTimeout]);
 
+  // Generate relevant but incorrect guesses based on the actual answer
+  const generateRelevantIncorrectGuess = useCallback((correctAnswer: string) => {
+    const correctAnswerLower = correctAnswer.toLowerCase();
+    
+    // Extract key words from the correct answer
+    const words = correctAnswerLower.split(' ');
+    const keyWords = words.filter(word => word.length > 3 && !['with', 'and', 'the', 'that', 'this', 'from', 'they', 'have'].includes(word));
+    
+    // Get one random keyword from the answer if available
+    const randomKeyword = keyWords.length > 0 ? keyWords[Math.floor(Math.random() * keyWords.length)] : '';
+    
+    // Generate related but incorrect guesses based on the theme
+    if (correctAnswerLower.includes('mountain')) {
+      return ["A snowy hill", "A rocky cliff", "Hills with trees"][Math.floor(Math.random() * 3)];
+    } else if (correctAnswerLower.includes('beach') || correctAnswerLower.includes('ocean')) {
+      return ["A lake with boats", "A coastal view", "A sunny shore"][Math.floor(Math.random() * 3)];
+    } else if (correctAnswerLower.includes('forest') || correctAnswerLower.includes('tree')) {
+      return ["A park with benches", "A garden with plants", "Woods in autumn"][Math.floor(Math.random() * 3)];
+    } else if (correctAnswerLower.includes('animal') || correctAnswerLower.includes('dog') || correctAnswerLower.includes('cat')) {
+      return ["A wild animal", "A pet playing", "Some kind of mammal"][Math.floor(Math.random() * 3)];
+    } else if (correctAnswerLower.includes('food') || correctAnswerLower.includes('fruit') || correctAnswerLower.includes('cake')) {
+      return ["A plate of snacks", "Some kind of dessert", "Food arrangement"][Math.floor(Math.random() * 3)];
+    } else if (correctAnswerLower.includes('flower') || correctAnswerLower.includes('garden')) {
+      return ["Colorful plants", "A botanical scene", "Nature landscape"][Math.floor(Math.random() * 3)];
+    } else if (correctAnswerLower.includes('building') || correctAnswerLower.includes('house')) {
+      return ["An architectural structure", "A modern home", "A building with windows"][Math.floor(Math.random() * 3)];
+    } else if (randomKeyword) {
+      // Use the random keyword to build a related but incorrect guess
+      return `Something with ${randomKeyword}`;
+    }
+    
+    // Fallback to generic related guesses
+    return [
+      "Something similar but not quite it",
+      "I can almost see what it is",
+      "It looks familiar but I can't tell exactly",
+      "Almost the same theme but different"
+    ][Math.floor(Math.random() * 4)];
+  }, []);
+
   const startBotGuessing = useCallback((botName: string) => {
     // Clear any existing timeout
     if (botGuessTimeout) {
@@ -48,7 +81,10 @@ export const useGameBots = (
     // Add typing indicator for this bot
     addUserGuess(botName, "", true);
     
-    // Randomly decide if this bot will guess correctly (10% chance, reduced from 20%)
+    // Get the correct answer for reference (to make incorrect guesses relevant)
+    const correctAnswer = getCurrentAnswer();
+    
+    // Randomly decide if this bot will guess correctly (10% chance)
     const willGuessCorrectly = Math.random() < 0.1;
     
     // If the bot will guess correctly, they'll do it after some delay
@@ -56,14 +92,11 @@ export const useGameBots = (
       const correctGuessDelay = Math.floor(Math.random() * 3000) + 2000; // 2-5 seconds
       
       const timeout = setTimeout(() => {
-        // Get the correct answer
-        const answer = getCurrentAnswer();
-        
         // Update the bot's guess to be correct
-        addUserGuess(botName, answer, true, true);
+        addUserGuess(botName, correctAnswer, true, true);
         
         // Notify parent about the correct guess
-        onBotCorrectGuess(answer);
+        onBotCorrectGuess(correctAnswer);
         
         // Play correct sound
         soundManager.play('correct');
@@ -76,15 +109,15 @@ export const useGameBots = (
       
       setBotGuessTimeout(timeout);
     } else {
-      // Bot will guess incorrectly
+      // Bot will guess incorrectly with a related guess
       const incorrectGuessDelay = Math.floor(Math.random() * 2000) + 1000; // 1-3 seconds
       
       const timeout = setTimeout(() => {
-        // Get a random incorrect guess
-        const randomGuess = RANDOM_INCORRECT_GUESSES[Math.floor(Math.random() * RANDOM_INCORRECT_GUESSES.length)];
+        // Generate a relevant but incorrect guess
+        const relevantIncorrectGuess = generateRelevantIncorrectGuess(correctAnswer);
         
         // Update the bot's guess
-        addUserGuess(botName, randomGuess, true, false);
+        addUserGuess(botName, relevantIncorrectGuess, true, false);
         
         setIsStreaming(false);
         setBotGuessTimeout(null);
@@ -92,7 +125,7 @@ export const useGameBots = (
       
       setBotGuessTimeout(timeout);
     }
-  }, [botGuessTimeout, hasCorrectGuess, addUserGuess, getCurrentAnswer, onBotCorrectGuess]);
+  }, [botGuessTimeout, hasCorrectGuess, addUserGuess, getCurrentAnswer, onBotCorrectGuess, generateRelevantIncorrectGuess]);
 
   // Trigger bot guessing based on revealed tiles
   const checkAndTriggerBots = useCallback((userGuesses: UserGuess[]) => {

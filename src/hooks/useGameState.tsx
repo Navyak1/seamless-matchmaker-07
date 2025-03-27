@@ -1,4 +1,3 @@
-
 import { useState, useCallback, useEffect } from 'react';
 import soundManager from '@/utils/sound';
 import { toast } from 'sonner';
@@ -70,7 +69,6 @@ export const useGameState = (): UseGameStateReturn => {
     endGame
   );
 
-  // Add a user guess to the list
   const addUserGuess = useCallback((username: string, guess: string, isBot: boolean = false, isCorrect: boolean = false) => {
     const newGuess: UserGuess = {
       username,
@@ -83,7 +81,6 @@ export const useGameState = (): UseGameStateReturn => {
     
     setUserGuesses(prev => [...prev, newGuess]);
     
-    // If it's a bot and is typing, simulate the typing and then reveal the guess
     if (isBot && newGuess.isTyping) {
       const typingTime = Math.floor(Math.random() * 2000) + 1000; // 1-3 seconds
       
@@ -113,31 +110,25 @@ export const useGameState = (): UseGameStateReturn => {
     handleBotCorrectGuess
   );
 
-  // Generate initial set of images when the component mounts
   useEffect(() => {
     generateInitialImages();
   }, [generateInitialImages]);
 
-  // Start bot guessing when tiles are revealed
   useEffect(() => {
     checkAndTriggerBots(userGuesses);
   }, [revealedTiles, allTilesRevealed, hasCorrectGuess, userGuesses, checkAndTriggerBots]);
 
-  // Handle user guess submission
   const handleGuessSubmit = useCallback(() => {
     if (isDisabled || !currentGuess.trim()) return;
     
     setIsDisabled(true);
     
-    // Add the user's guess to the list
     addUserGuess('You', currentGuess);
     
-    // Check if the guess is correct (case insensitive comparison)
     const answer = getCurrentAnswer();
     const correct = currentGuess.toLowerCase().trim() === answer.toLowerCase().trim();
     
     if (correct) {
-      // Update this guess to be correct
       setUserGuesses(prev => 
         prev.map(g => 
           g.username === 'You' && g.guess === currentGuess
@@ -156,21 +147,17 @@ export const useGameState = (): UseGameStateReturn => {
       setIsDisabled(false);
     }
     
-    // Clear the input field after submission
     setCurrentGuess('');
   }, [isDisabled, currentGuess, addUserGuess, getCurrentAnswer, handlePlayerCorrectGuess]);
 
-  // Custom wrapper for revealRandomTile to reset streaming status
   const revealRandomTile = useCallback(() => {
     originalRevealRandomTile();
     setIsStreaming(true);
   }, [originalRevealRandomTile, setIsStreaming]);
 
-  // Wrapper for revealAllTiles with additional logic
   const revealAllTiles = useCallback(() => {
     originalRevealAllTiles();
     
-    // If no correct guess yet, show the answer and move to next image after a delay
     if (!hasCorrectGuess) {
       const answer = getCurrentAnswer();
       revealAnswer(answer);
