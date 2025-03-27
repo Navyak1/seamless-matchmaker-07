@@ -48,8 +48,8 @@ export const useGameBots = (
     // Add typing indicator for this bot
     addUserGuess(botName, "", true);
     
-    // Randomly decide if this bot will guess correctly (20% chance)
-    const willGuessCorrectly = Math.random() < 0.2;
+    // Randomly decide if this bot will guess correctly (10% chance, reduced from 20%)
+    const willGuessCorrectly = Math.random() < 0.1;
     
     // If the bot will guess correctly, they'll do it after some delay
     if (willGuessCorrectly) {
