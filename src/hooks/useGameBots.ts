@@ -1,3 +1,4 @@
+
 import { useState, useCallback, useEffect } from 'react';
 import { UserGuess } from '@/types/gameTypes';
 import soundManager from '@/utils/sound';
@@ -66,6 +67,9 @@ export const useGameBots = (
         
         // Play correct sound
         soundManager.play('correct');
+        
+        // Add celebratory sound effect with a slight delay
+        setTimeout(() => soundManager.play('win'), 300);
         
         setBotGuessTimeout(null);
       }, correctGuessDelay);

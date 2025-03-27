@@ -194,4 +194,54 @@
       background-position: 0% 50%;
     }
   }
+
+  /* New animation for correct guesses */
+  .correct-guess-highlight {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .correct-guess-highlight::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(255,215,0,0.3), rgba(124,252,0,0.3), rgba(0,255,127,0.3));
+    background-size: 200% 200%;
+    animation: shimmer 2s linear infinite;
+    z-index: -1;
+    border-radius: 0.5rem;
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: 0% 50%;
+    }
+    100% {
+      background-position: 100% 50%;
+    }
+  }
+
+  .sparkle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background-color: gold;
+    opacity: 0;
+    animation: sparkle-animation 1s ease-in-out forwards;
+  }
+
+  @keyframes sparkle-animation {
+    0% {
+      transform: scale(0) translate(0, 0);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(1) translate(var(--x), var(--y));
+      opacity: 0;
+    }
+  }
 }
