@@ -45,6 +45,8 @@ export const useGameState = (): UseGameStateReturn => {
   const [isStreaming, setIsStreaming] = useState(false);
   const [botGuessTimeout, setBotGuessTimeout] = useState<NodeJS.Timeout | null>(null);
   const [hasCorrectGuess, setHasCorrectGuess] = useState(false);
+  const [showAnswer, setShowAnswer] = useState(false);
+  const [correctAnswer, setCorrectAnswer] = useState('');
 
   const endGame = useCallback((playerWins: boolean = true) => {
     // Cleanup any pending timeouts
@@ -171,13 +173,14 @@ export const useGameState = (): UseGameStateReturn => {
       
       const timeout = setTimeout(() => {
         // Get the correct answer
-        const correctAnswer = getCurrentAnswer();
+        const answer = getCurrentAnswer();
+        setCorrectAnswer(answer);
         
         // Update the bot's guess to be correct
         setUserGuesses(prev => 
           prev.map(g => 
             g.username === botName && g.isTyping
-              ? { ...g, guess: correctAnswer, isTyping: false, isCorrect: true }
+              ? { ...g, guess: answer, isTyping: false, isCorrect: true }
               : g
           )
         );
@@ -188,7 +191,8 @@ export const useGameState = (): UseGameStateReturn => {
         // Play correct sound
         soundManager.play('correct');
         
-        // Show toast that the bot got it right
+        // Show answer
+        setShowAnswer(true);
         toast.success(`${botName} guessed correctly!`);
         
         // After a delay, move to the next image or end game
@@ -204,8 +208,9 @@ export const useGameState = (): UseGameStateReturn => {
             setUserGuesses([]);
             setHasCorrectGuess(false);
             setIsStreaming(false);
+            setShowAnswer(false);
           }
-        }, 2000);
+        }, 3000);
         
         setBotGuessTimeout(null);
       }, correctGuessDelay);
@@ -245,7 +250,8 @@ export const useGameState = (): UseGameStateReturn => {
     addUserGuess('You', currentGuess);
     
     // Check if the guess is correct (case insensitive comparison)
-    const correct = currentGuess.toLowerCase().trim() === getCurrentAnswer().toLowerCase().trim();
+    const answer = getCurrentAnswer();
+    const correct = currentGuess.toLowerCase().trim() === answer.toLowerCase().trim();
     
     if (correct) {
       // Update this guess to be correct
@@ -258,6 +264,8 @@ export const useGameState = (): UseGameStateReturn => {
       );
       
       setHasCorrectGuess(true);
+      setCorrectAnswer(answer);
+      setShowAnswer(true);
       setScore(prevScore => prevScore + 10);
       soundManager.play('correct');
       toast.success("Correct guess! +10 points");
@@ -270,12 +278,13 @@ export const useGameState = (): UseGameStateReturn => {
         setCurrentGuess('');
         setUserGuesses([]);
         setHasCorrectGuess(false);
+        setShowAnswer(false);
         
         // End game after all images
         if (totalImagesPlayed >= 4) { // 5 images total (0-indexed)
           endGame(true);
         }
-      }, 1500);
+      }, 3000);
     } else {
       soundManager.play('wrong');
       toast.error("Wrong guess! Try again");
@@ -298,7 +307,9 @@ export const useGameState = (): UseGameStateReturn => {
     
     // If no correct guess yet, show the answer and move to next image after a delay
     if (!hasCorrectGuess) {
-      toast.info(`The answer was: ${getCurrentAnswer()}`);
+      const answer = getCurrentAnswer();
+      setCorrectAnswer(answer);
+      setShowAnswer(true);
       
       setTimeout(() => {
         moveToNextImage();
@@ -306,12 +317,13 @@ export const useGameState = (): UseGameStateReturn => {
         setUserGuesses([]);
         setHasCorrectGuess(false);
         setIsStreaming(false);
+        setShowAnswer(false);
         
         // End game after all images
         if (totalImagesPlayed >= 4) { // 5 images total (0-indexed)
           endGame(score >= 30);
         }
-      }, 3000);
+      }, 5000); // Increased delay to give users time to see the answer
     }
   }, [originalRevealAllTiles, hasCorrectGuess, getCurrentAnswer, moveToNextImage, resetTiles, totalImagesPlayed, endGame, score]);
 
@@ -337,6 +349,8 @@ export const useGameState = (): UseGameStateReturn => {
     userGuesses,
     currentGuess,
     isStreaming,
+    correctAnswer,
+    showAnswer,
     getCurrentImage,
     getCurrentAnswer,
     handleTileClick,

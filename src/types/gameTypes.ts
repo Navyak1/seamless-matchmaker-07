@@ -26,6 +26,8 @@ export interface GameState {
   userGuesses: UserGuess[];
   currentGuess: string;
   isStreaming: boolean;
+  correctAnswer: string;
+  showAnswer: boolean;
 }
 
 export interface UseGameStateReturn extends GameState {
