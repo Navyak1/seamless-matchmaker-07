@@ -30,8 +30,8 @@ const GuessInput: React.FC<GuessInputProps> = ({
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    // Focus the input when all tiles are revealed
-    if (allTilesRevealed && inputRef.current) {
+    // Focus the input when component mounts or when tiles are revealed
+    if (inputRef.current) {
       inputRef.current.focus();
     }
   }, [allTilesRevealed]);
@@ -48,57 +48,30 @@ const GuessInput: React.FC<GuessInputProps> = ({
         {allTilesRevealed ? "What is this picture showing?" : "Reveal tiles to see the hidden picture!"}
       </h2>
       
-      {allTilesRevealed ? (
-        <div className="space-y-4">
-          <div className="flex space-x-2">
-            <Input
-              ref={inputRef}
-              value={currentGuess}
-              onChange={(e) => setCurrentGuess(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="Enter your guess here..."
-              disabled={isDisabled}
-              className="flex-grow"
-            />
-            <Button 
-              onClick={handleGuessSubmit} 
-              disabled={isDisabled || !currentGuess.trim()}
-            >
-              <Send className="mr-2 h-4 w-4" />
-              Submit
-            </Button>
-          </div>
-          
-          {userGuesses.length > 0 && (
-            <motion.div 
-              className="bg-background/50 backdrop-blur-sm p-4 rounded-lg border border-border"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-            >
-              <h3 className="font-medium mb-2">Recent Guesses:</h3>
-              <div className="space-y-2 max-h-40 overflow-y-auto">
-                {userGuesses.map((guess, index) => (
-                  <motion.div 
-                    key={index}
-                    className="flex items-center justify-between text-sm"
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.05 }}
-                  >
-                    <span className="font-medium">{guess.username}:</span>
-                    <span className="text-muted-foreground">{guess.guess}</span>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-          )}
+      <div className="space-y-4">
+        {/* Always show guess input */}
+        <div className="flex space-x-2">
+          <Input
+            ref={inputRef}
+            value={currentGuess}
+            onChange={(e) => setCurrentGuess(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Enter your guess here..."
+            disabled={isDisabled}
+            className="flex-grow"
+          />
+          <Button 
+            onClick={handleGuessSubmit} 
+            disabled={isDisabled || !currentGuess.trim()}
+          >
+            <Send className="mr-2 h-4 w-4" />
+            Submit
+          </Button>
         </div>
-      ) : (
-        <div className="text-center">
-          <p className="text-muted-foreground text-sm mb-4">
-            Click on the tiles or use the reveal button to uncover parts of the image
-          </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
+        
+        {/* Show revelation controls if not all tiles are revealed */}
+        {!allTilesRevealed && (
+          <div className="flex flex-col sm:flex-row justify-center gap-4 mt-4">
             <Button 
               onClick={revealRandomTile}
               variant="outline"
@@ -116,8 +89,35 @@ const GuessInput: React.FC<GuessInputProps> = ({
               Reveal All Tiles
             </Button>
           </div>
-        </div>
-      )}
+        )}
+        
+        {/* Always show guesses section */}
+        <motion.div 
+          className="bg-background/50 backdrop-blur-sm p-4 rounded-lg border border-border mt-4"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <h3 className="font-medium mb-2">Guesses:</h3>
+          {userGuesses.length > 0 ? (
+            <div className="space-y-2 max-h-40 overflow-y-auto">
+              {userGuesses.map((guess, index) => (
+                <motion.div 
+                  key={index}
+                  className="flex items-center justify-between text-sm"
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                >
+                  <span className="font-medium">{guess.username}:</span>
+                  <span className="text-muted-foreground">{guess.guess}</span>
+                </motion.div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground">No guesses yet. Be the first to guess!</p>
+          )}
+        </motion.div>
+      </div>
     </div>
   );
 };
