@@ -38,15 +38,17 @@ export const useGameImages = () => {
       return ['', '', '', ''];
     }
     
-    // Get the exact prompt as the correct answer - this is the single word
+    // Get the correct prompt as the correct answer
     const correctPrompt = generatedImages[currentImageIndex]?.prompt || '';
     
     // Generate fake options from other images to make the game challenging
     const fakeOptions = [];
-    const allOptions = [...Object.keys(generatedImages.map(img => img.prompt))];
+    
+    // Get all prompts from other images
+    const allPrompts = generatedImages.map(img => img.prompt);
     
     // Remove the correct answer from options to avoid duplicates
-    const availableOptions = allOptions.filter(opt => opt !== correctPrompt);
+    const availableOptions = allPrompts.filter(opt => opt !== correctPrompt);
     
     // Randomly select 3 fake options from available options
     while (fakeOptions.length < 3 && availableOptions.length > 0) {

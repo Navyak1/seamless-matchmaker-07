@@ -32,7 +32,7 @@ const GuessInput: React.FC<GuessInputProps> = ({
   return (
     <div className="space-y-4">
       <h2 className="text-lg font-medium text-center mb-4">
-        {allTilesRevealed ? "What is this picture showing?" : "Reveal tiles to see the hidden picture!"}
+        {allTilesRevealed ? "What is this picture showing? Type your answer!" : "Reveal tiles to see the hidden picture!"}
       </h2>
       
       <div className="space-y-4">

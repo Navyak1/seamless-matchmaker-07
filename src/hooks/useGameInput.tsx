@@ -48,7 +48,13 @@ export const useGameInput = (
     addUserGuess('You', currentGuess);
     
     const answer = getCurrentAnswer();
-    const correct = currentGuess.toLowerCase().trim() === answer.toLowerCase().trim();
+    const userGuessLower = currentGuess.toLowerCase().trim();
+    const answerLower = answer.toLowerCase().trim();
+    
+    // Check for exact match or close match (contains the word)
+    const correct = userGuessLower === answerLower || 
+                   (answerLower.includes(userGuessLower) && userGuessLower.length > 2) ||
+                   (userGuessLower.includes(answerLower) && answerLower.length > 2);
     
     if (correct) {
       setUserGuesses(prev => 
