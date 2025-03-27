@@ -1,5 +1,4 @@
-
-import { GeneratedImage } from "@/utils/imageGenerationService";
+import { GeneratedImage } from "@/types/imageGenerationTypes";
 
 export interface GameState {
   score: number;

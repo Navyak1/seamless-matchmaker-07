@@ -1,6 +1,7 @@
 
 import { useState, useCallback } from 'react';
-import { GeneratedImage, imageGenerationService } from '@/utils/imageGenerationService';
+import { imageGenerationService } from '@/utils/imageGenerationService';
+import { GeneratedImage } from '@/types/imageGenerationTypes';
 import { toast } from 'sonner';
 
 // Number of images to generate for each game

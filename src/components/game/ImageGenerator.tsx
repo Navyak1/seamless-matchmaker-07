@@ -1,11 +1,11 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Wand2 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { imageGenerationService, GeneratedImage } from '@/utils/imageGenerationService';
+import { imageGenerationService } from '@/utils/imageGenerationService';
+import { GeneratedImage } from '@/types/imageGenerationTypes';
 
 interface ImageGeneratorProps {
   onImageGenerated: (image: GeneratedImage) => void;
