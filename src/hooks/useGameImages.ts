@@ -38,36 +38,42 @@ export const useGameImages = () => {
       return ['', '', '', ''];
     }
     
+    // Get the exact prompt as the correct answer - this is the single word
     const correctPrompt = generatedImages[currentImageIndex]?.prompt || '';
     
-    // Generate fake options based on other images
+    // Generate fake options from other images to make the game challenging
     const fakeOptions = [];
+    const allOptions = [...Object.keys(generatedImages.map(img => img.prompt))];
     
-    // Use prompts from other images if available
-    for (let i = 0; i < generatedImages.length; i++) {
-      if (i !== currentImageIndex && fakeOptions.length < 3) {
-        fakeOptions.push(generatedImages[i].prompt);
-      }
+    // Remove the correct answer from options to avoid duplicates
+    const availableOptions = allOptions.filter(opt => opt !== correctPrompt);
+    
+    // Randomly select 3 fake options from available options
+    while (fakeOptions.length < 3 && availableOptions.length > 0) {
+      const randomIndex = Math.floor(Math.random() * availableOptions.length);
+      fakeOptions.push(availableOptions[randomIndex]);
+      availableOptions.splice(randomIndex, 1);
     }
     
-    // Fill remaining options if needed
+    // If we don't have enough fake options, add some additional options
+    const backupOptions = ["Tree", "Cat", "House", "Car"];
     while (fakeOptions.length < 3) {
-      const randomIndex = Math.floor(Math.random() * generatedImages.length);
-      if (randomIndex !== currentImageIndex && !fakeOptions.includes(generatedImages[randomIndex].prompt)) {
-        fakeOptions.push(generatedImages[randomIndex].prompt);
+      const randomOption = backupOptions[Math.floor(Math.random() * backupOptions.length)];
+      if (!fakeOptions.includes(randomOption) && randomOption !== correctPrompt) {
+        fakeOptions.push(randomOption);
       }
     }
     
     // Shuffle the options and include the correct answer
-    const allOptions = [correctPrompt, ...fakeOptions];
-    return shuffleArray(allOptions);
+    const allAnswerOptions = [correctPrompt, ...fakeOptions];
+    return shuffleArray(allAnswerOptions);
   }, [generatedImages, currentImageIndex]);
 
   const getCurrentAnswer = useCallback(() => {
     if (generatedImages.length === 0) {
       return '';
     }
-    // This is the key change - we're getting the exact prompt used to generate the image
+    // Return the exact prompt used to generate the image - guaranteed to match
     return generatedImages[currentImageIndex]?.prompt || '';
   }, [generatedImages, currentImageIndex]);
 

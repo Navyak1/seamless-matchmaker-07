@@ -1,49 +1,36 @@
-
 /**
- * Random subjects for automatic image generation
+ * Simple, single-word subjects for image generation
  */
 export const randomSubjects = [
   // Nature
-  "A mountain landscape with snow",
-  "A tropical beach with palm trees",
-  "A forest with tall pine trees",
-  "A waterfall in a jungle",
+  "Mountain",
+  "Beach",
+  "Forest",
+  "Waterfall",
   
   // Animals
-  "A cute puppy playing with a ball",
-  "A colorful parrot in a tree",
-  "A family of elephants at a watering hole",
-  "A panda eating bamboo",
-  
-  // Cartoon characters
-  "A friendly cartoon rabbit",
-  "A heroic cartoon character with a cape",
-  "A funny cartoon cat chasing a mouse",
-  "A group of cartoon penguins sliding on ice",
-  
-  // Toys
-  "A collection of colorful building blocks",
-  "A teddy bear sitting on a shelf",
-  "A toy train on wooden tracks",
-  "A set of action figures in a battle pose",
+  "Dog",
+  "Parrot",
+  "Elephant",
+  "Panda",
   
   // Food
-  "A plate of colorful fruits",
-  "A birthday cake with candles",
-  "A basket of fresh vegetables",
-  "An ice cream sundae with sprinkles",
+  "Cake",
+  "Apple",
+  "Pizza",
+  "Banana",
   
   // Flowers
-  "A bouquet of colorful wildflowers",
-  "A field of sunflowers",
-  "A garden with blooming roses",
-  "Cherry blossom trees in spring",
+  "Rose",
+  "Sunflower",
+  "Tulip",
+  "Daisy",
   
-  // Fantasy
-  "A unicorn in a magical forest",
-  "A dragon flying over mountains",
-  "A fairy garden with tiny houses",
-  "A wizard casting a colorful spell"
+  // Simple objects
+  "Book",
+  "Chair",
+  "Clock",
+  "Ball"
 ];
 
 /**
@@ -52,14 +39,9 @@ export const randomSubjects = [
 export const randomCategories = [
   "Nature",
   "Animals",
-  "Cartoon Characters",
-  "Toys",
   "Food",
   "Flowers",
-  "Fantasy",
-  "Vehicles",
-  "Sports",
-  "Space"
+  "Objects"
 ];
 
 /**

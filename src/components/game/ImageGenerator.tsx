@@ -29,10 +29,19 @@ const ImageGenerator: React.FC<ImageGeneratorProps> = ({
       return;
     }
     
+    // Check if the prompt is a single word
+    if (prompt.trim().split(/\s+/).length > 1) {
+      toast.error("Please enter only a single word for the prompt");
+      return;
+    }
+    
+    // Capitalize the first letter for consistency with our mapping
+    const formattedPrompt = prompt.trim().charAt(0).toUpperCase() + prompt.trim().slice(1);
+    
     try {
       setIsGenerating(true);
       const generatedImage = await imageGenerationService.generateImage({
-        prompt,
+        prompt: formattedPrompt,
         category
       });
       
@@ -59,14 +68,17 @@ const ImageGenerator: React.FC<ImageGeneratorProps> = ({
       <CardContent className="space-y-4">
         <div className="space-y-2">
           <label htmlFor="prompt" className="text-sm font-medium">
-            Describe what you want in the image:
+            Enter a single word (e.g., Cake, Dog, Mountain):
           </label>
           <Input
             id="prompt"
-            placeholder="E.g., A mountain landscape with snow"
+            placeholder="E.g., Apple, Rose, Chair"
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
           />
+          {prompt.trim().split(/\s+/).length > 1 && (
+            <p className="text-red-500 text-sm">Please enter only a single word</p>
+          )}
         </div>
         <div className="space-y-2">
           <label htmlFor="category" className="text-sm font-medium">
@@ -83,7 +95,7 @@ const ImageGenerator: React.FC<ImageGeneratorProps> = ({
       <CardFooter>
         <Button 
           onClick={handleGenerate}
-          disabled={isGenerating || !prompt.trim()}
+          disabled={isGenerating || !prompt.trim() || prompt.trim().split(/\s+/).length > 1}
           className="w-full bg-gradient-to-r from-primary to-secondary hover:opacity-90"
         >
           {isGenerating ? (
