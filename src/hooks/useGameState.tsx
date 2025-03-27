@@ -101,6 +101,7 @@ export const useGameState = (): UseGameStateReturn => {
 
   const {
     isStreaming,
+    setIsStreaming,
     checkAndTriggerBots,
     clearBotTimeout
   } = useGameBots(
@@ -163,7 +164,7 @@ export const useGameState = (): UseGameStateReturn => {
   const revealRandomTile = useCallback(() => {
     originalRevealRandomTile();
     setIsStreaming(true);
-  }, [originalRevealRandomTile]);
+  }, [originalRevealRandomTile, setIsStreaming]);
 
   // Wrapper for revealAllTiles with additional logic
   const revealAllTiles = useCallback(() => {

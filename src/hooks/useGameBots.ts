@@ -1,4 +1,3 @@
-
 import { useState, useCallback, useEffect } from 'react';
 import { UserGuess } from '@/types/gameTypes';
 import soundManager from '@/utils/sound';
@@ -117,6 +116,7 @@ export const useGameBots = (
 
   return {
     isStreaming,
+    setIsStreaming,
     checkAndTriggerBots,
     clearBotTimeout: () => {
       if (botGuessTimeout) {
