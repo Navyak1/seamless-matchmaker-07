@@ -4,6 +4,7 @@ import Header from '@/components/layout/Header';
 import GameHeader from '@/components/game/GameHeader';
 import WinnerAnnouncement from '@/components/game/WinnerAnnouncement';
 import GameContent from '@/components/game/GameContent';
+import GameLoading from '@/components/game/GameLoading';
 import { useGameState } from '@/hooks/useGameState';
 import useWindowSize from '@/hooks/useWindowSize';
 import { motion } from 'framer-motion';
