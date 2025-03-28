@@ -81,9 +81,11 @@ const Index = () => {
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.6 }}
           >
-            MEMORY
+            LET'S
             <br />
-            GAME
+            UNLOCK THE
+            <br />
+            PICTURE!
           </motion.h1>
           
           <motion.div
