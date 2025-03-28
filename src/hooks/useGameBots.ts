@@ -84,8 +84,17 @@ export const useGameBots = (
     // Get the correct answer for reference (to make incorrect guesses relevant)
     const correctAnswer = getCurrentAnswer();
     
-    // Randomly decide if this bot will guess correctly (10% chance)
-    const willGuessCorrectly = Math.random() < 0.1;
+    // Calculate difficulty based on revealed tiles count
+    const revealedCount = revealedTiles.filter(Boolean).length;
+    
+    // Bots are more likely to guess correctly with more tiles revealed
+    // Start at 5% chance with 1 tile, increase by ~5% per additional tile
+    const baseChance = 0.03;
+    const revealFactor = 0.05;
+    const correctChance = Math.min(0.9, baseChance + (revealedCount * revealFactor));
+    
+    // Randomly decide if this bot will guess correctly based on revealed tiles
+    const willGuessCorrectly = Math.random() < correctChance;
     
     // If the bot will guess correctly, they'll do it after some delay
     if (willGuessCorrectly) {
@@ -125,14 +134,14 @@ export const useGameBots = (
       
       setBotGuessTimeout(timeout);
     }
-  }, [botGuessTimeout, hasCorrectGuess, addUserGuess, getCurrentAnswer, onBotCorrectGuess, generateRelevantIncorrectGuess]);
+  }, [botGuessTimeout, hasCorrectGuess, addUserGuess, getCurrentAnswer, onBotCorrectGuess, generateRelevantIncorrectGuess, revealedTiles]);
 
   // Trigger bot guessing based on revealed tiles
   const checkAndTriggerBots = useCallback((userGuesses: UserGuess[]) => {
     // Count how many tiles are revealed
     const revealedCount = revealedTiles.filter(Boolean).length;
     
-    // Don't trigger bots if all tiles are revealed or if there's already a correct guess
+    // Don't trigger bots if no tiles are revealed or if there's already a correct guess
     if (revealedCount === 0 || allTilesRevealed || hasCorrectGuess) return;
     
     // First bot starts guessing after 1 tile is revealed

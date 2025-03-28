@@ -15,7 +15,7 @@ export const useGameAnswers = (
   const [correctAnswer, setCorrectAnswer] = useState('');
   const [isDisabled, setIsDisabled] = useState(false);
 
-  const handleCorrectGuess = useCallback((answer: string, isPlayer: boolean = false) => {
+  const handleCorrectGuess = useCallback((answer: string, isPlayer: boolean = false, revealedCount: number = 0) => {
     setHasCorrectGuess(true);
     setCorrectAnswer(answer);
     setShowAnswer(true);
@@ -40,13 +40,13 @@ export const useGameAnswers = (
     }, 3000);
   }, [moveToNextImage, resetTiles, setTotalImagesPlayed, endGame]);
 
-  const handleBotCorrectGuess = useCallback((answer: string) => {
-    handleCorrectGuess(answer, false);
+  const handleBotCorrectGuess = useCallback((answer: string, revealedCount: number = 0) => {
+    handleCorrectGuess(answer, false, revealedCount);
   }, [handleCorrectGuess]);
 
-  const handlePlayerCorrectGuess = useCallback((answer: string, updateScore: () => void) => {
-    updateScore(); // Update player score
-    handleCorrectGuess(answer, true);
+  const handlePlayerCorrectGuess = useCallback((answer: string, updateScore: (revealedCount?: number) => void, revealedCount: number = 0) => {
+    updateScore(revealedCount); // Update player score based on revealed tile count
+    handleCorrectGuess(answer, true, revealedCount);
   }, [handleCorrectGuess]);
 
   const revealAnswer = useCallback((answer: string) => {

@@ -51,6 +51,7 @@ export const useGameInput = (
     const userGuessLower = currentGuess.toLowerCase().trim();
     const answerLower = answer.toLowerCase().trim();
     
+    // Calculate similarity to determine if the guess is correct
     // Check for exact match or close match (contains the word)
     const correct = userGuessLower === answerLower || 
                    (answerLower.includes(userGuessLower) && userGuessLower.length > 2) ||
@@ -68,7 +69,7 @@ export const useGameInput = (
       handlePlayerCorrectGuess(answer, updateScore);
     } else {
       soundManager.play('wrong');
-      toast.error("Wrong guess! Try again");
+      toast.error("Not quite right! Try again or reveal more tiles");
       setIsDisabled(false);
     }
     

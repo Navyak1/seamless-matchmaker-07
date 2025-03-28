@@ -53,6 +53,9 @@ export const useGameState = (): UseGameStateReturn => {
     resetTiles
   } = useGameTiles();
 
+  // Calculate how many tiles are currently revealed
+  const revealedCount = revealedTiles.filter(Boolean).length;
+
   // Answer validation
   const {
     hasCorrectGuess,
@@ -80,7 +83,8 @@ export const useGameState = (): UseGameStateReturn => {
     handleGuessSubmit
   } = useGameInput(
     getCurrentAnswer,
-    handlePlayerCorrectGuess,
+    // Pass the current revealed count to calculate score
+    (answer, updateScoreFn) => handlePlayerCorrectGuess(answer, updateScoreFn, revealedCount),
     updateScore
   );
 
@@ -96,7 +100,7 @@ export const useGameState = (): UseGameStateReturn => {
     hasCorrectGuess,
     addUserGuess,
     getCurrentAnswer,
-    handleBotCorrectGuess
+    (answer) => handleBotCorrectGuess(answer, revealedCount)
   );
 
   // Initialize game

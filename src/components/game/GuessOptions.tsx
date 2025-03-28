@@ -21,7 +21,7 @@ const GuessOptions: React.FC<GuessOptionsProps> = ({
       transition={{ duration: 0.3 }}
     >
       <div className="text-center text-sm text-muted-foreground mb-2">
-        <p>Reveal tiles to get more clues, or try guessing now!</p>
+        <p>Reveal more tiles for clues, or try to guess with what you can see!</p>
       </div>
       
       <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">
@@ -31,7 +31,7 @@ const GuessOptions: React.FC<GuessOptionsProps> = ({
           className="animate-pulse-soft flex items-center"
         >
           <Eye className="mr-2 h-4 w-4" />
-          Reveal Random Tile
+          Reveal Next Tile
         </Button>
         <Button 
           onClick={revealAllTiles}

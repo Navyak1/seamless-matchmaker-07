@@ -34,11 +34,11 @@ const GuessInput: React.FC<GuessInputProps> = ({
       <h2 className="text-lg font-medium text-center mb-4">
         {allTilesRevealed 
           ? "What is this picture showing? Type your answer!" 
-          : "Try to guess what's in the image after each reveal or reveal more tiles to get a better view!"}
+          : "Try to guess what's in the image after each reveal! The earlier you guess correctly, the more points you earn!"}
       </h2>
       
       <div className="space-y-4">
-        {/* Guess input form - always visible now */}
+        {/* Guess input form - always visible */}
         <GuessForm
           currentGuess={currentGuess}
           setCurrentGuess={setCurrentGuess}

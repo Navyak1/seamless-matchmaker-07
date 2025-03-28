@@ -20,11 +20,11 @@ const GuessForm: React.FC<GuessFormProps> = ({
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    // Focus the input when component mounts
-    if (inputRef.current) {
+    // Focus the input when component mounts and when isDisabled changes to false
+    if (inputRef.current && !isDisabled) {
       inputRef.current.focus();
     }
-  }, []);
+  }, [isDisabled]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !isDisabled) {
