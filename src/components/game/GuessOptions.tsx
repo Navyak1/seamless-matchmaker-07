@@ -21,7 +21,7 @@ const GuessOptions: React.FC<GuessOptionsProps> = ({
       transition={{ duration: 0.3 }}
     >
       <div className="text-center text-sm text-muted-foreground mb-2">
-        <p>Reveal more tiles for clues, or try to guess with what you can see!</p>
+        <p>Reveal tiles for clues and guess after each reveal for maximum points!</p>
       </div>
       
       <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">

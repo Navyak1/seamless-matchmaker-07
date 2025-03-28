@@ -39,7 +39,7 @@ const GuessForm: React.FC<GuessFormProps> = ({
         value={currentGuess}
         onChange={(e) => setCurrentGuess(e.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder="Guess what's in the image..."
+        placeholder="Type your guess here..."
         disabled={isDisabled}
         className="flex-grow"
       />

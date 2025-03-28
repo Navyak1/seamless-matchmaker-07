@@ -33,8 +33,8 @@ const GuessInput: React.FC<GuessInputProps> = ({
     <div className="space-y-4">
       <h2 className="text-lg font-medium text-center mb-4">
         {allTilesRevealed 
-          ? "What is this picture showing? Type your answer!" 
-          : "Try to guess what's in the image after each reveal! The earlier you guess correctly, the more points you earn!"}
+          ? "Final chance! What does this picture show?" 
+          : "Guess after each reveal! The fewer tiles shown, the more points you earn!"}
       </h2>
       
       <div className="space-y-4">

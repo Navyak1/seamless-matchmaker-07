@@ -43,6 +43,7 @@ export const useGameInput = (
   const handleGuessSubmit = useCallback(() => {
     if (isDisabled || !currentGuess.trim()) return;
     
+    // Temporarily disable to prevent spam
     setIsDisabled(true);
     
     addUserGuess('You', currentGuess);
@@ -70,7 +71,10 @@ export const useGameInput = (
     } else {
       soundManager.play('wrong');
       toast.error("Not quite right! Try again or reveal more tiles");
-      setIsDisabled(false);
+      // Re-enable input quickly so user can guess again after each reveal
+      setTimeout(() => {
+        setIsDisabled(false);
+      }, 500);
     }
     
     setCurrentGuess('');
