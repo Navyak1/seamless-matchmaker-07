@@ -59,6 +59,7 @@ export const useGameInput = (
                    (userGuessLower.includes(answerLower) && answerLower.length > 2);
     
     if (correct) {
+      // Mark this guess as correct in the list
       setUserGuesses(prev => 
         prev.map(g => 
           g.username === 'You' && g.guess === currentGuess
@@ -67,6 +68,12 @@ export const useGameInput = (
         )
       );
       
+      // Display the correct answer with a success message
+      toast.success(`Correct! The answer is: ${answer}`, {
+        duration: 3000
+      });
+      
+      // Handle the correct guess (update score and move to next image)
       handlePlayerCorrectGuess(answer, updateScore);
     } else {
       soundManager.play('wrong');

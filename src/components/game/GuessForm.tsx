@@ -2,7 +2,7 @@
 import React, { useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Send, Search } from 'lucide-react';
+import { Send } from 'lucide-react';
 
 interface GuessFormProps {
   currentGuess: string;

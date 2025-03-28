@@ -21,6 +21,10 @@ export const useGameAnswers = (
     setShowAnswer(true);
     setIsDisabled(true);
     
+    // Show the correct answer and play sound
+    soundManager.play('correct');
+    toast.success(`The answer is: ${answer}`);
+    
     // Add delay before moving to next image
     setTimeout(() => {
       moveToNextImage();
@@ -54,6 +58,11 @@ export const useGameAnswers = (
       setCorrectAnswer(answer);
       setShowAnswer(true);
       setIsDisabled(true);
+      
+      // Display the correct answer with 100% accuracy
+      toast.info(`The correct answer is: ${answer}`, {
+        duration: 4000
+      });
       
       setTimeout(() => {
         moveToNextImage();
