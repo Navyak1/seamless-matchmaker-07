@@ -39,7 +39,7 @@ const GuessForm: React.FC<GuessFormProps> = ({
         value={currentGuess}
         onChange={(e) => setCurrentGuess(e.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder="Type your guess here..."
+        placeholder="Type your guess here... (available for every tile reveal)"
         disabled={isDisabled}
         className="flex-grow"
       />
