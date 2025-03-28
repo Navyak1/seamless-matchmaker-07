@@ -1,5 +1,5 @@
 
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Send } from 'lucide-react';
@@ -9,22 +9,24 @@ interface GuessFormProps {
   setCurrentGuess: (guess: string) => void;
   handleGuessSubmit: () => void;
   isDisabled: boolean;
+  tileRevealCount: number;  // Added prop to track tile reveals
 }
 
 const GuessForm: React.FC<GuessFormProps> = ({
   currentGuess,
   setCurrentGuess,
   handleGuessSubmit,
-  isDisabled
+  isDisabled,
+  tileRevealCount
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    // Focus the input when component mounts and when isDisabled changes to false
+    // Focus the input when component mounts, tile reveals, or isDisabled changes
     if (inputRef.current && !isDisabled) {
       inputRef.current.focus();
     }
-  }, [isDisabled]);
+  }, [isDisabled, tileRevealCount]);  // Trigger focus on each reveal
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !isDisabled) {
@@ -35,6 +37,7 @@ const GuessForm: React.FC<GuessFormProps> = ({
   return (
     <div className="flex space-x-2">
       <Input
+        key={tileRevealCount}  // Forces re-render on each tile reveal
         ref={inputRef}
         value={currentGuess}
         onChange={(e) => setCurrentGuess(e.target.value)}

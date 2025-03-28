@@ -61,6 +61,7 @@ const GameContent: React.FC<GameContentProps> = ({
         showAnswer={showAnswer}
         correctAnswer={correctAnswer}
         moveToNextImage={moveToNextImage}
+        revealedTiles={revealedTiles} // Pass revealedTiles to GuessInput
       />
     </>
   );

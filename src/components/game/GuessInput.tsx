@@ -20,6 +20,7 @@ interface GuessInputProps {
   showAnswer: boolean;
   correctAnswer: string;
   moveToNextImage: () => void;
+  revealedTiles: boolean[]; // Add this to track revealed tiles
 }
 
 const GuessInput: React.FC<GuessInputProps> = ({
@@ -34,8 +35,12 @@ const GuessInput: React.FC<GuessInputProps> = ({
   isStreaming,
   showAnswer,
   correctAnswer,
-  moveToNextImage
+  moveToNextImage,
+  revealedTiles
 }) => {
+  // Calculate the number of revealed tiles to use as a key for GuessForm
+  const tileRevealCount = revealedTiles.filter(Boolean).length;
+
   return (
     <div className="space-y-4">
       <h2 className="text-lg font-medium text-center mb-4">
@@ -52,6 +57,7 @@ const GuessInput: React.FC<GuessInputProps> = ({
             setCurrentGuess={setCurrentGuess}
             handleGuessSubmit={handleGuessSubmit}
             isDisabled={isDisabled}
+            tileRevealCount={tileRevealCount}  // Pass the tile reveal count
           />
         ) : (
           <motion.div 
