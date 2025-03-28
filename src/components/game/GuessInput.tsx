@@ -38,7 +38,7 @@ const GuessInput: React.FC<GuessInputProps> = ({
       </h2>
       
       <div className="space-y-4">
-        {/* Guess input form - always visible */}
+        {/* Guess input form - always visible for all tile reveals */}
         <GuessForm
           currentGuess={currentGuess}
           setCurrentGuess={setCurrentGuess}

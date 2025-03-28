@@ -70,11 +70,9 @@ const ImageTiles: React.FC<ImageTilesProps> = ({
       )}
       
       {/* Show tiles revealed counter */}
-      {!allTilesRevealed && revealedCount > 0 && (
-        <div className="absolute top-2 right-2 bg-primary/80 text-white text-xs font-bold px-2 py-1 rounded-full">
-          {revealedCount}/9 tiles
-        </div>
-      )}
+      <div className="absolute top-2 right-2 bg-primary/80 text-white text-xs font-bold px-2 py-1 rounded-full">
+        {revealedCount}/9 tiles
+      </div>
     </div>
   );
 };

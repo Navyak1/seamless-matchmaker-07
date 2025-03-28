@@ -84,8 +84,9 @@ export const useGameState = (): UseGameStateReturn => {
   } = useGameInput(
     getCurrentAnswer,
     // Pass the current revealed count to calculate score
-    (answer, updateScoreFn) => handlePlayerCorrectGuess(answer, updateScoreFn, revealedCount),
-    updateScore
+    (answer, updateScoreFn, revealedCount) => handlePlayerCorrectGuess(answer, updateScoreFn, revealedCount),
+    updateScore,
+    revealedTiles
   );
 
   // Bot players logic

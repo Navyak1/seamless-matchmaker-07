@@ -6,8 +6,9 @@ import { toast } from 'sonner';
 
 export const useGameInput = (
   getCurrentAnswer: () => string,
-  handlePlayerCorrectGuess: (answer: string, updateScore: () => void) => void,
-  updateScore: () => void
+  handlePlayerCorrectGuess: (answer: string, updateScore: (revealedCount: number) => void, revealedCount: number) => void,
+  updateScore: (revealedCount: number) => void,
+  revealedTiles: boolean[]
 ) => {
   const [userGuesses, setUserGuesses] = useState<UserGuess[]>([]);
   const [currentGuess, setCurrentGuess] = useState('');
@@ -43,6 +44,9 @@ export const useGameInput = (
   const handleGuessSubmit = useCallback(() => {
     if (isDisabled || !currentGuess.trim()) return;
     
+    // Calculate how many tiles are revealed
+    const revealedCount = revealedTiles.filter(Boolean).length;
+    
     // Temporarily disable to prevent spam
     setIsDisabled(true);
     
@@ -74,7 +78,7 @@ export const useGameInput = (
       });
       
       // Handle the correct guess (update score and move to next image)
-      handlePlayerCorrectGuess(answer, updateScore);
+      handlePlayerCorrectGuess(answer, updateScore, revealedCount);
     } else {
       soundManager.play('wrong');
       toast.error("Not quite right! Try again or reveal more tiles");
@@ -85,7 +89,7 @@ export const useGameInput = (
     }
     
     setCurrentGuess('');
-  }, [isDisabled, currentGuess, addUserGuess, getCurrentAnswer, handlePlayerCorrectGuess, updateScore]);
+  }, [isDisabled, currentGuess, addUserGuess, getCurrentAnswer, handlePlayerCorrectGuess, updateScore, revealedTiles]);
 
   return {
     userGuesses,

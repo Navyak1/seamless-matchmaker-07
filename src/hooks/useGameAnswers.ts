@@ -48,7 +48,7 @@ export const useGameAnswers = (
     handleCorrectGuess(answer, false, revealedCount);
   }, [handleCorrectGuess]);
 
-  const handlePlayerCorrectGuess = useCallback((answer: string, updateScore: (revealedCount?: number) => void, revealedCount: number = 0) => {
+  const handlePlayerCorrectGuess = useCallback((answer: string, updateScore: (revealedCount: number) => void, revealedCount: number = 0) => {
     updateScore(revealedCount); // Update player score based on revealed tile count
     handleCorrectGuess(answer, true, revealedCount);
   }, [handleCorrectGuess]);
