@@ -16,6 +16,8 @@ const ImageTiles: React.FC<ImageTilesProps> = ({
   handleTileClick, 
   allTilesRevealed 
 }) => {
+  const revealedCount = revealedTiles.filter(Boolean).length;
+
   return (
     <div className="relative aspect-video w-full mb-8 overflow-hidden rounded-xl border-4 border-secondary/30">
       <div className="relative w-full h-full">
@@ -61,10 +63,17 @@ const ImageTiles: React.FC<ImageTilesProps> = ({
           transition={{ duration: 0.5 }}
         >
           <div className="bg-black/40 backdrop-blur-sm p-4 rounded-xl text-white text-center">
-            <p className="text-lg font-bold mb-2">What is this picture showing?</p>
-            <p className="text-sm">Select the correct answer below!</p>
+            <p className="text-lg font-bold mb-2">Full image revealed!</p>
+            <p className="text-sm">Make your final guess now</p>
           </div>
         </motion.div>
+      )}
+      
+      {/* Show tiles revealed counter */}
+      {!allTilesRevealed && revealedCount > 0 && (
+        <div className="absolute top-2 right-2 bg-primary/80 text-white text-xs font-bold px-2 py-1 rounded-full">
+          {revealedCount}/9 tiles
+        </div>
       )}
     </div>
   );

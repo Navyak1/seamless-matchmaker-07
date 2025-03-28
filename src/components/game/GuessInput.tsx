@@ -32,11 +32,13 @@ const GuessInput: React.FC<GuessInputProps> = ({
   return (
     <div className="space-y-4">
       <h2 className="text-lg font-medium text-center mb-4">
-        {allTilesRevealed ? "What is this picture showing? Type your answer!" : "Reveal tiles to see the hidden picture!"}
+        {allTilesRevealed 
+          ? "What is this picture showing? Type your answer!" 
+          : "Try to guess what's in the image after each reveal or reveal more tiles to get a better view!"}
       </h2>
       
       <div className="space-y-4">
-        {/* Guess input form */}
+        {/* Guess input form - always visible now */}
         <GuessForm
           currentGuess={currentGuess}
           setCurrentGuess={setCurrentGuess}
@@ -44,7 +46,7 @@ const GuessInput: React.FC<GuessInputProps> = ({
           isDisabled={isDisabled}
         />
         
-        {/* Revelation controls */}
+        {/* Revelation controls - only shown if not all tiles revealed */}
         {!allTilesRevealed && (
           <GuessOptions
             revealRandomTile={revealRandomTile}

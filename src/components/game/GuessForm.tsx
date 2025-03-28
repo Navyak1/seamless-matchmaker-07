@@ -2,7 +2,7 @@
 import React, { useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Send } from 'lucide-react';
+import { Send, Search } from 'lucide-react';
 
 interface GuessFormProps {
   currentGuess: string;
@@ -39,16 +39,17 @@ const GuessForm: React.FC<GuessFormProps> = ({
         value={currentGuess}
         onChange={(e) => setCurrentGuess(e.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder="Enter your guess here..."
+        placeholder="Guess what's in the image..."
         disabled={isDisabled}
         className="flex-grow"
       />
       <Button 
         onClick={handleGuessSubmit} 
         disabled={isDisabled || !currentGuess.trim()}
+        className="bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity"
       >
         <Send className="mr-2 h-4 w-4" />
-        Submit
+        Guess
       </Button>
     </div>
   );
