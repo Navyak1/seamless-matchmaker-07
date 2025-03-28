@@ -42,13 +42,10 @@ export const useGameInput = (
   }, []);
 
   const handleGuessSubmit = useCallback(() => {
-    if (isDisabled || !currentGuess.trim()) return;
+    if (!currentGuess.trim()) return;
     
     // Calculate how many tiles are revealed
     const revealedCount = revealedTiles.filter(Boolean).length;
-    
-    // Temporarily disable to prevent spam
-    setIsDisabled(true);
     
     addUserGuess('You', currentGuess);
     
@@ -74,17 +71,13 @@ export const useGameInput = (
       
       // Handle the correct guess (update score and move to next image)
       handlePlayerCorrectGuess(answer, updateScore, revealedCount);
+      setCurrentGuess('');
     } else {
       soundManager.play('wrong');
       toast.error("Not quite right! Try again or reveal more tiles");
-      // Re-enable input quickly so user can guess again after each reveal
-      setTimeout(() => {
-        setIsDisabled(false);
-      }, 500);
+      setCurrentGuess('');
     }
-    
-    setCurrentGuess('');
-  }, [isDisabled, currentGuess, addUserGuess, getCurrentAnswer, handlePlayerCorrectGuess, updateScore, revealedTiles]);
+  }, [currentGuess, addUserGuess, getCurrentAnswer, handlePlayerCorrectGuess, updateScore, revealedTiles]);
 
   return {
     userGuesses,
@@ -97,3 +90,4 @@ export const useGameInput = (
     handleGuessSubmit
   };
 };
+

@@ -1,10 +1,11 @@
 
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { UserGuess } from '@/types/gameTypes';
 import GuessForm from './GuessForm';
 import GuessOptions from './GuessOptions';
 import GuessList from './GuessList';
+import { Button } from '@/components/ui/button';
 
 interface GuessInputProps {
   allTilesRevealed: boolean;
@@ -88,5 +89,5 @@ const GuessInput: React.FC<GuessInputProps> = ({
   );
 };
 
-import { Button } from '@/components/ui/button';
 export default GuessInput;
+
