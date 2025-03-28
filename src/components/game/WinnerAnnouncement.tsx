@@ -48,7 +48,7 @@ const WinnerAnnouncement: React.FC<WinnerAnnouncementProps> = ({
   if (!show) return null;
 
   return (
-    <div className="winner-announcement">
+    <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/40 backdrop-blur-sm">
       {isWinner && (
         <Confetti
           width={width}
@@ -58,7 +58,11 @@ const WinnerAnnouncement: React.FC<WinnerAnnouncementProps> = ({
         />
       )}
       <motion.div 
-        className={`winner-card ${isWinner ? 'bg-gradient-to-r from-primary-50 to-secondary-50' : 'bg-gradient-to-r from-gray-100 to-gray-200'}`}
+        className={`winner-card max-w-md w-full mx-4 p-8 rounded-2xl shadow-2xl ${
+          isWinner 
+            ? 'bg-gradient-to-r from-primary-50 to-secondary-50 dark:from-primary-900/40 dark:to-secondary-900/40' 
+            : 'bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700'
+        }`}
         initial={{ scale: 0.5, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ type: "spring", stiffness: 300, damping: 20 }}
@@ -66,12 +70,12 @@ const WinnerAnnouncement: React.FC<WinnerAnnouncementProps> = ({
         <h2 className={`text-2xl md:text-3xl font-bold text-center mb-4 ${
           isWinner 
             ? 'bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent' 
-            : 'text-gray-700'
+            : 'text-gray-700 dark:text-gray-300'
         }`}>
           {isWinner ? "Congratulations!" : "You Lose!"}
         </h2>
-        <p className="text-center text-lg mb-6">
-          You scored <span className={`font-bold ${isWinner ? 'text-primary' : 'text-gray-700'}`}>{score} points</span>!
+        <p className="text-center text-lg mb-6 dark:text-gray-200">
+          You scored <span className={`font-bold ${isWinner ? 'text-primary dark:text-primary-400' : 'text-gray-700 dark:text-gray-300'}`}>{score} points</span>!
         </p>
         <div className="flex justify-center">
           <Button 
