@@ -16,7 +16,7 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 const App = () => {
-  // Enhanced approach to remove the Edit with Lovable button and badge
+  // Enhanced and more aggressive approach to remove the Edit with Lovable button and badge
   useEffect(() => {
     // Function to remove Lovable elements
     const removeLovableElements = () => {
@@ -30,7 +30,11 @@ const App = () => {
         "[class*='lovable']",  // Target any class containing 'lovable'
         "[id*='lovable']",     // Target any id containing 'lovable'
         // Iframe that might contain the badge
-        "iframe[src*='lovable']"
+        "iframe[src*='lovable']",
+        // Additional selectors for better coverage
+        "div[style*='position: fixed'][style*='z-index: 999']",
+        "div[style*='position: fixed'][style*='bottom: 0']",
+        "div[style*='position: fixed'][style*='right: 0']"
       ];
       
       // Try to remove elements matching any of these selectors
@@ -42,8 +46,11 @@ const App = () => {
       
       // Also check for and remove any fixed positioned elements that might be the badge
       document.querySelectorAll('div[style*="position: fixed"]').forEach(element => {
-        if (element.innerHTML.toLowerCase().includes('lovable') || 
-            element.textContent?.toLowerCase().includes('lovable')) {
+        if (element.innerHTML?.toLowerCase().includes('lovable') || 
+            element.textContent?.toLowerCase().includes('lovable') ||
+            element.innerHTML?.includes('edit') ||
+            (element.style.bottom === '0px' && element.style.right === '0px') ||
+            element.style.zIndex > 900) {
           element.remove();
         }
       });
@@ -55,14 +62,26 @@ const App = () => {
     removeLovableElements();
     
     // Strategy 2: Remove after a short delay (for elements added during/after initial render)
-    const timeoutId = setTimeout(removeLovableElements, 1000);
+    const timeoutId = setTimeout(removeLovableElements, 200);
     
-    // Strategy 3: Set up periodic checks
-    const intervalId = setInterval(removeLovableElements, 2000);
+    // Strategy 3: Set up frequent checks during the first few seconds
+    const initialIntervals = [
+      setTimeout(() => removeLovableElements(), 500),
+      setTimeout(() => removeLovableElements(), 1000),
+      setTimeout(() => removeLovableElements(), 2000)
+    ];
     
-    // Strategy 4: Use MutationObserver to detect when new elements are added
+    // Strategy 4: Set up a less frequent interval for ongoing checks
+    const intervalId = setInterval(removeLovableElements, 3000);
+    
+    // Strategy 5: Use MutationObserver to detect when new elements are added
     const observer = new MutationObserver((mutations) => {
-      removeLovableElements();
+      for (const mutation of mutations) {
+        if (mutation.addedNodes.length) {
+          removeLovableElements();
+          break;
+        }
+      }
     });
     
     observer.observe(document.body, { 
@@ -75,6 +94,7 @@ const App = () => {
     // Clean up when component unmounts
     return () => {
       clearTimeout(timeoutId);
+      initialIntervals.forEach(clearTimeout);
       clearInterval(intervalId);
       observer.disconnect();
     };
