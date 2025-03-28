@@ -1,4 +1,5 @@
-import { useEffect } from "react"; // Import useEffect
+
+import { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -15,11 +16,40 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 const App = () => {
+  // Enhanced approach to remove the Edit with Lovable button
   useEffect(() => {
-    const editableButton = document.getElementById("lovable-edit-button");
-    if (editableButton) {
-      editableButton.remove();
-    }
+    // Function to remove the button
+    const removeLovableButton = () => {
+      const editableButton = document.getElementById("lovable-edit-button");
+      if (editableButton) {
+        editableButton.remove();
+      }
+      
+      // Also try with class selector in case ID changes
+      const editButtons = document.querySelectorAll('.lovable-edit-button');
+      editButtons.forEach(button => button.remove());
+    };
+    
+    // Remove on initial load
+    removeLovableButton();
+    
+    // Also set up a small delay to catch any buttons that might be added after initial render
+    const timeoutId = setTimeout(removeLovableButton, 1000);
+    
+    // Also set up a MutationObserver to catch any dynamically added buttons
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach(() => {
+        removeLovableButton();
+      });
+    });
+    
+    observer.observe(document.body, { childList: true, subtree: true });
+    
+    // Clean up on component unmount
+    return () => {
+      clearTimeout(timeoutId);
+      observer.disconnect();
+    };
   }, []);
 
   return (
@@ -44,4 +74,3 @@ const App = () => {
 };
 
 export default App;
-
