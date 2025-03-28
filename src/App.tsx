@@ -16,38 +16,66 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 const App = () => {
-  // Enhanced approach to remove the Edit with Lovable button
+  // Enhanced approach to remove the Edit with Lovable button and badge
   useEffect(() => {
-    // Function to remove the button
-    const removeLovableButton = () => {
-      const editableButton = document.getElementById("lovable-edit-button");
-      if (editableButton) {
-        editableButton.remove();
-      }
+    // Function to remove Lovable elements
+    const removeLovableElements = () => {
+      // Common selectors that might be used for the Lovable badge/button
+      const selectors = [
+        "#lovable-edit-button",
+        ".lovable-edit-button",
+        "#lovable-badge",
+        ".lovable-badge",
+        "[data-lovable-badge]",
+        "[class*='lovable']",  // Target any class containing 'lovable'
+        "[id*='lovable']",     // Target any id containing 'lovable'
+        // Iframe that might contain the badge
+        "iframe[src*='lovable']"
+      ];
       
-      // Also try with class selector in case ID changes
-      const editButtons = document.querySelectorAll('.lovable-edit-button');
-      editButtons.forEach(button => button.remove());
+      // Try to remove elements matching any of these selectors
+      selectors.forEach(selector => {
+        document.querySelectorAll(selector).forEach(element => {
+          element.remove();
+        });
+      });
+      
+      // Also check for and remove any fixed positioned elements that might be the badge
+      document.querySelectorAll('div[style*="position: fixed"]').forEach(element => {
+        if (element.innerHTML.toLowerCase().includes('lovable') || 
+            element.textContent?.toLowerCase().includes('lovable')) {
+          element.remove();
+        }
+      });
     };
     
-    // Remove on initial load
-    removeLovableButton();
+    // Execute removal strategies
     
-    // Also set up a small delay to catch any buttons that might be added after initial render
-    const timeoutId = setTimeout(removeLovableButton, 1000);
+    // Strategy 1: Remove on initial load
+    removeLovableElements();
     
-    // Also set up a MutationObserver to catch any dynamically added buttons
+    // Strategy 2: Remove after a short delay (for elements added during/after initial render)
+    const timeoutId = setTimeout(removeLovableElements, 1000);
+    
+    // Strategy 3: Set up periodic checks
+    const intervalId = setInterval(removeLovableElements, 2000);
+    
+    // Strategy 4: Use MutationObserver to detect when new elements are added
     const observer = new MutationObserver((mutations) => {
-      mutations.forEach(() => {
-        removeLovableButton();
-      });
+      removeLovableElements();
     });
     
-    observer.observe(document.body, { childList: true, subtree: true });
+    observer.observe(document.body, { 
+      childList: true, 
+      subtree: true, 
+      attributes: true,
+      attributeFilter: ['class', 'style']
+    });
     
-    // Clean up on component unmount
+    // Clean up when component unmounts
     return () => {
       clearTimeout(timeoutId);
+      clearInterval(intervalId);
       observer.disconnect();
     };
   }, []);
