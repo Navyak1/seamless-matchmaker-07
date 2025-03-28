@@ -63,7 +63,8 @@ export const useGameState = (): UseGameStateReturn => {
     correctAnswer,
     handleBotCorrectGuess,
     handlePlayerCorrectGuess,
-    revealAnswer
+    revealAnswer,
+    proceedToNextImage
   } = useGameAnswers(
     moveToNextImage,
     resetTiles,
@@ -129,6 +130,14 @@ export const useGameState = (): UseGameStateReturn => {
     }
   }, [originalRevealAllTiles, hasCorrectGuess, getCurrentAnswer, revealAnswer]);
 
+  // Auto-advance to next image when all tiles are revealed
+  useEffect(() => {
+    if (allTilesRevealed && !hasCorrectGuess) {
+      const answer = getCurrentAnswer();
+      revealAnswer(answer);
+    }
+  }, [allTilesRevealed, hasCorrectGuess, getCurrentAnswer, revealAnswer]);
+
   return {
     score,
     timeLeft,
@@ -156,6 +165,7 @@ export const useGameState = (): UseGameStateReturn => {
     setCurrentGuess,
     addUserGuess,
     endGame,
-    toggleMute
+    toggleMute,
+    moveToNextImage: proceedToNextImage
   };
 };

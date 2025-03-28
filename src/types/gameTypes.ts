@@ -39,6 +39,7 @@ export interface UseGameStateReturn extends GameState {
   handleGuessSubmit: () => void;
   setCurrentGuess: (guess: string) => void;
   addUserGuess: (username: string, guess: string, isBot?: boolean, isCorrect?: boolean) => void;
-  endGame: () => void;
+  endGame: (playerWins: boolean) => void;
   toggleMute: () => void;
+  moveToNextImage: () => void;
 }

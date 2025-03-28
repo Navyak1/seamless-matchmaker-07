@@ -23,26 +23,8 @@ export const useGameAnswers = (
     
     // Show the correct answer and play sound
     soundManager.play('correct');
-    toast.success(`The answer is: ${answer}`);
-    
-    // Add delay before moving to next image
-    setTimeout(() => {
-      moveToNextImage();
-      resetTiles();
-      setHasCorrectGuess(false);
-      setShowAnswer(false);
-      setIsDisabled(false);
-      
-      // End game after all images
-      setTotalImagesPlayed(prev => {
-        // Check if this was the last image
-        if (prev >= 4) { // 5 images total (0-indexed)
-          endGame(isPlayer);
-        }
-        return prev + 1;
-      });
-    }, 3000);
-  }, [moveToNextImage, resetTiles, setTotalImagesPlayed, endGame]);
+    toast.success(`Correct! The answer is: ${answer}`);
+  }, []);
 
   const handleBotCorrectGuess = useCallback((answer: string, revealedCount: number = 0) => {
     handleCorrectGuess(answer, false, revealedCount);
@@ -63,25 +45,25 @@ export const useGameAnswers = (
       toast.info(`The correct answer is: ${answer}`, {
         duration: 4000
       });
-      
-      setTimeout(() => {
-        moveToNextImage();
-        resetTiles();
-        setHasCorrectGuess(false);
-        setShowAnswer(false);
-        setIsDisabled(false);
-        
-        // End game after all images
-        setTotalImagesPlayed(prev => {
-          // Check if this was the last image
-          if (prev >= 4) { // 5 images total (0-indexed)
-            endGame(false);
-          }
-          return prev + 1;
-        });
-      }, 5000); // Increased delay to give users time to see the answer
     }
-  }, [hasCorrectGuess, moveToNextImage, resetTiles, setTotalImagesPlayed, endGame]);
+  }, [hasCorrectGuess]);
+
+  const proceedToNextImage = useCallback(() => {
+    moveToNextImage();
+    resetTiles();
+    setHasCorrectGuess(false);
+    setShowAnswer(false);
+    setIsDisabled(false);
+    
+    // End game after all images
+    setTotalImagesPlayed(prev => {
+      // Check if this was the last image
+      if (prev >= 4) { // 5 images total (0-indexed)
+        endGame(hasCorrectGuess); // Pass if the player got the last one right
+      }
+      return prev + 1;
+    });
+  }, [moveToNextImage, resetTiles, setTotalImagesPlayed, endGame, hasCorrectGuess]);
 
   return {
     hasCorrectGuess,
@@ -91,6 +73,7 @@ export const useGameAnswers = (
     setIsDisabled,
     handleBotCorrectGuess,
     handlePlayerCorrectGuess,
-    revealAnswer
+    revealAnswer,
+    proceedToNextImage
   };
 };

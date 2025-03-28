@@ -72,11 +72,6 @@ export const useGameInput = (
         )
       );
       
-      // Display the correct answer with a success message
-      toast.success(`Correct! The answer is: ${answer}`, {
-        duration: 3000
-      });
-      
       // Handle the correct guess (update score and move to next image)
       handlePlayerCorrectGuess(answer, updateScore, revealedCount);
     } else {

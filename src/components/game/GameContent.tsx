@@ -19,6 +19,7 @@ interface GameContentProps {
   revealAllTiles: () => void;
   handleGuessSubmit: () => void;
   setCurrentGuess: (guess: string) => void;
+  moveToNextImage: () => void;
 }
 
 const GameContent: React.FC<GameContentProps> = ({
@@ -35,7 +36,8 @@ const GameContent: React.FC<GameContentProps> = ({
   revealRandomTile,
   revealAllTiles,
   handleGuessSubmit,
-  setCurrentGuess
+  setCurrentGuess,
+  moveToNextImage
 }) => {
   return (
     <>
@@ -45,18 +47,6 @@ const GameContent: React.FC<GameContentProps> = ({
         handleTileClick={handleTileClick}
         allTilesRevealed={allTilesRevealed}
       />
-      
-      {showAnswer && (
-        <motion.div 
-          className="mt-4 p-4 rounded-lg bg-primary/10 border border-primary/30 text-center"
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          <h3 className="text-lg font-medium mb-1">The correct answer was:</h3>
-          <p className="text-xl font-bold text-primary">{correctAnswer}</p>
-        </motion.div>
-      )}
       
       <GuessInput 
         allTilesRevealed={allTilesRevealed}
@@ -68,6 +58,9 @@ const GameContent: React.FC<GameContentProps> = ({
         revealAllTiles={revealAllTiles}
         userGuesses={userGuesses}
         isStreaming={isStreaming}
+        showAnswer={showAnswer}
+        correctAnswer={correctAnswer}
+        moveToNextImage={moveToNextImage}
       />
     </>
   );
